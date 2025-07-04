@@ -18,7 +18,7 @@ const Notificacion: React.FC<NotificacionProps> = ({
   opacidad = ""
 }) => {
   return (
-    <div className={`bg-white/40 backdrop-blur-md rounded-2xl shadow-sm border border-gray-100 p-4 hover:shadow-md transition-shadow cursor-pointer ${opacidad}`}>
+    <div className={`bg-white/20 backdrop-blur-lg rounded-2xl shadow-sm border border-white/30 p-4 hover:shadow-md transition-shadow cursor-pointer ${opacidad}`}>
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <div className="flex items-center space-x-2 mb-1">
