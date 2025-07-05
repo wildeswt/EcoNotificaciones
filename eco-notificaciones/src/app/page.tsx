@@ -54,6 +54,8 @@ export default function Home() {
   const [expandidoPasadas, setExpandidoPasadas] = useState(false);
   const [mostrarODS, setMostrarODS] = useState(false);
   const [mostrarSobreNosotros, setMostrarSobreNosotros] = useState(false);
+  const [recientes, setRecientes] = useState(notificacionesRecientes);
+  const [pasadas, setPasadas] = useState(notificacionesPasadas);
 
   useEffect(() => {
     if (typeof window !== "undefined" && "Notification" in window) {
@@ -68,6 +70,15 @@ export default function Home() {
       }
     }
   }, []);
+
+  // Función para eliminar notificación reciente
+  function eliminarNotificacionReciente(idx: number) {
+    setRecientes(prev => prev.filter((_, i) => i !== idx));
+  }
+  // Función para eliminar notificación pasada
+  function eliminarNotificacionPasada(idx: number) {
+    setPasadas(prev => prev.filter((_, i) => i !== idx));
+  }
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-beige p-4">
@@ -115,7 +126,7 @@ export default function Home() {
         <h2 className="text-xl font-semibold mb-4 text-primary px-2">Recientes</h2>
         <div className="relative min-h-[80px]">
           <AnimatePresence mode="wait">
-            {notificacionesRecientes.length > 1 && !expandidoRecientes ? (
+            {recientes.length > 1 && !expandidoRecientes ? (
               <motion.div
                 key="stacked"
                 initial={{ opacity: 0, scale: 0.95 }}
@@ -132,7 +143,7 @@ export default function Home() {
                   transition={{ duration: 0.3, delay: 0.05 }}
                   className="absolute left-0 right-0 top-2 z-0 scale-95 blur-[1px]"
                 >
-                  <Notificacion {...notificacionesRecientes[1]} />
+                  <Notificacion {...recientes[1]} expandida={false} />
                 </motion.div>
                 <motion.div
                   initial={{ opacity: 0, y: -8 }}
@@ -140,7 +151,7 @@ export default function Home() {
                   transition={{ duration: 0.3 }}
                   className="relative z-10"
                 >
-                  <Notificacion {...notificacionesRecientes[0]} />
+                  <Notificacion {...recientes[0]} expandida={false} />
                 </motion.div>
                 <motion.div
                   initial={{ opacity: 0 }}
@@ -148,7 +159,7 @@ export default function Home() {
                   transition={{ duration: 0.2, delay: 0.15 }}
                   className="flex justify-center mt-2"
                 >
-                  <span className="text-xs text-gray-500">{notificacionesRecientes.length} notificaciones</span>
+                  <span className="text-xs text-gray-500">{recientes.length} notificaciones</span>
                 </motion.div>
               </motion.div>
             ) : (
@@ -162,7 +173,7 @@ export default function Home() {
                 className="space-y-3"
               >
                 <AnimatePresence>
-                  {notificacionesRecientes.map((n, i) => (
+                  {recientes.map((n, i) => (
                     <motion.div
                       key={i}
                       layout
@@ -175,11 +186,11 @@ export default function Home() {
                         ease: "easeOut"
                       }}
                     >
-                      <Notificacion {...n} />
+                      <Notificacion {...n} onRemove={() => eliminarNotificacionReciente(i)} expandida={true} />
                     </motion.div>
                   ))}
                 </AnimatePresence>
-                {notificacionesRecientes.length > 1 && (
+                {recientes.length > 1 && (
                   <motion.div
                     layout
                     initial={{ opacity: 0 }}
@@ -206,7 +217,7 @@ export default function Home() {
         <h2 className="text-xl font-semibold mb-4 text-primary px-2">Pasadas</h2>
         <div className="relative min-h-[80px]">
           <AnimatePresence mode="wait">
-            {notificacionesPasadas.length > 1 && !expandidoPasadas ? (
+            {pasadas.length > 1 && !expandidoPasadas ? (
               <motion.div
                 key="stacked"
                 initial={{ opacity: 0, scale: 0.95 }}
@@ -223,7 +234,7 @@ export default function Home() {
                   transition={{ duration: 0.3, delay: 0.05 }}
                   className="absolute left-0 right-0 top-2 z-0 scale-95 blur-[1px]"
                 >
-                  <Notificacion {...notificacionesPasadas[1]} />
+                  <Notificacion {...pasadas[1]} expandida={false} />
                 </motion.div>
                 <motion.div
                   initial={{ opacity: 0, y: -8 }}
@@ -231,7 +242,7 @@ export default function Home() {
                   transition={{ duration: 0.3 }}
                   className="relative z-10"
                 >
-                  <Notificacion {...notificacionesPasadas[0]} />
+                  <Notificacion {...pasadas[0]} expandida={false} />
                 </motion.div>
                 <motion.div
                   initial={{ opacity: 0 }}
@@ -239,7 +250,7 @@ export default function Home() {
                   transition={{ duration: 0.2, delay: 0.15 }}
                   className="flex justify-center mt-2"
                 >
-                  <span className="text-xs text-gray-500">{notificacionesPasadas.length} notificaciones</span>
+                  <span className="text-xs text-gray-500">{pasadas.length} notificaciones</span>
                 </motion.div>
               </motion.div>
             ) : (
@@ -253,7 +264,7 @@ export default function Home() {
                 className="space-y-3"
               >
                 <AnimatePresence>
-                  {notificacionesPasadas.map((n, i) => (
+                  {pasadas.map((n, i) => (
                     <motion.div
                       key={i}
                       layout
@@ -266,11 +277,11 @@ export default function Home() {
                         ease: "easeOut"
                       }}
                     >
-                      <Notificacion {...n} />
+                      <Notificacion {...n} onRemove={() => eliminarNotificacionPasada(i)} expandida={true} />
                     </motion.div>
                   ))}
                 </AnimatePresence>
-                {notificacionesPasadas.length > 1 && (
+                {pasadas.length > 1 && (
                   <motion.div
                     layout
                     initial={{ opacity: 0 }}
