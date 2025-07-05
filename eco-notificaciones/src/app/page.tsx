@@ -1,6 +1,7 @@
 import Image from "next/image";
 
 export default function Home() {
+  mostrarNotificacion();
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
       
@@ -28,4 +29,31 @@ export default function Home() {
       </div>
     </div>
   );
+}
+
+if (Notification.permission === 'default') {
+  Notification.requestPermission().then(permission => {
+    if (permission === 'granted') {
+      console.log('Permiso de notificaciones concedido');
+    }
+  });
+}
+
+// Crear y mostrar la notificación (dentro de una función o evento)
+function mostrarNotificacion() {
+  if (Notification.permission === 'granted') {
+    const title = '¡Hola!';
+    const options = {
+      body: 'Esta es una notificación de prueba',
+      icon: 'icono.png',
+      tag: 'notificacion-prueba'
+    };
+    const notification = new Notification(title, options);
+
+    // Manejar el clic en la notificación
+    notification.addEventListener('click', () => {
+      window.open('https://www.ejemplo.com', '_blank'); // Redirigir a una URL
+      notification.close(); // Cerrar la notificación
+    });
+  }
 }
