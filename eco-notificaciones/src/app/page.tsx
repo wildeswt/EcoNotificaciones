@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import Notificacion from "./Notificacion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Leaf, Users } from "lucide-react";
 
@@ -50,11 +50,24 @@ const notificacionesPasadas = [
 ];
 
 export default function Home() {
-  mostrarNotificacion();
   const [expandidoRecientes, setExpandidoRecientes] = useState(false);
   const [expandidoPasadas, setExpandidoPasadas] = useState(false);
   const [mostrarODS, setMostrarODS] = useState(false);
   const [mostrarSobreNosotros, setMostrarSobreNosotros] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && "Notification" in window) {
+      if (Notification.permission === "default") {
+        Notification.requestPermission().then(permission => {
+          if (permission === "granted") {
+            mostrarNotificacion();
+          }
+        });
+      } else if (Notification.permission === "granted") {
+        mostrarNotificacion();
+      }
+    }
+  }, []);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-beige p-4">
@@ -462,29 +475,17 @@ export default function Home() {
   );
 }
 
-if (Notification.permission === 'default') {
-  Notification.requestPermission().then(permission => {
-    if (permission === 'granted') {
-      console.log('Permiso de notificaciones concedido');
-    }
-  });
-}
-
-// Crear y mostrar la notificación (dentro de una función o evento)
 function mostrarNotificacion() {
-  if (Notification.permission === 'granted') {
-    const title = '¡Hola!';
-    const options = {
-      body: 'Esta es una notificación de prueba',
-      icon: 'icono.png',
-      tag: 'notificacion-prueba'
-    };
-    const notification = new Notification(title, options);
+  const title = "¡Hola!";
+  const options = {
+    body: "Esta es una notificación de prueba",
+    icon: "/icono.png",
+    tag: "notificacion-prueba"
+  };
+  const notification = new Notification(title, options);
 
-    // Manejar el clic en la notificación
-    notification.addEventListener('click', () => {
-      window.open('https://www.ejemplo.com', '_blank'); // Redirigir a una URL
-      notification.close(); // Cerrar la notificación
-    });
-  }
+  notification.addEventListener("click", () => {
+    window.open("https://www.ejemplo.com", "_blank");
+    notification.close();
+  });
 }
