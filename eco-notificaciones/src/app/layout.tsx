@@ -1,15 +1,11 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { Work_Sans } from 'next/font/google';
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const work_Sans = Work_Sans({
+  subsets: ['latin'],
+  weight: ['400', '700'], // personaliza pesos
+  variable: '--font-work-sans', // opcional para usar en Tailwind o CSS
 });
 
 export const metadata: Metadata = {
@@ -24,11 +20,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
-      </body>
+      <body className={work_Sans.className}>{children}</body>
     </html>
   );
 }
