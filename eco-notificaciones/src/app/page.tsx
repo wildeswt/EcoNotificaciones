@@ -4,6 +4,8 @@ import Notificacion from "./Notificacion";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Leaf, Users } from "lucide-react";
+import BotonODS from "./BotonODS";
+import BotonSobreNosotros from "./BotonSobreNosotros";
 
 const notificacionesRecientes = [
   {
@@ -84,37 +86,8 @@ export default function Home() {
     <div className="flex flex-col items-center justify-center min-h-screen bg-beige p-4">
       {/* Botones laterales - Posicionados a la izquierda */}
       <div className="fixed top-[10%] left-[5%] flex flex-col space-y-3">
-        {/* Botón ODS */}
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.4, delay: 0.2 }}
-          onClick={() => setMostrarODS(true)}
-          className="bg-white text-primary rounded-xl w-16 h-16 flex items-center justify-center shadow-lg cursor-pointer border-2 border-primary/20 hover:border-primary/40 transition-all duration-200"
-        >
-          <div className="text-center">
-            <Leaf className="w-6 h-6 mb-1" />
-            <div className="text-xs font-semibold">ODS</div>
-          </div>
-        </motion.button>
-
-        {/* Botón Sobre Nosotros */}
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.4, delay: 0.3 }}
-          onClick={() => setMostrarSobreNosotros(true)}
-          className="bg-white text-primary rounded-xl w-16 h-16 flex items-center justify-center shadow-lg cursor-pointer border-2 border-primary/20 hover:border-primary/40 transition-all duration-200"
-        >
-          <div className="text-center">
-            <Users className="w-6 h-6 mb-1" />
-            <div className="text-xs font-semibold">Nosotros</div>
-          </div>
-        </motion.button>
+        <BotonODS onClick={() => setMostrarODS(true)} />
+        <BotonSobreNosotros onClick={() => setMostrarSobreNosotros(true)} />
       </div>
 
       <div className="text-center">
@@ -136,7 +109,7 @@ export default function Home() {
                 className="cursor-pointer select-none"
                 onClick={() => setExpandidoRecientes(true)}
               >
-                {/* Stack visual */}
+              {/* Stack visual */}
                 <motion.div
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 0.7, y: 0 }}
@@ -162,7 +135,7 @@ export default function Home() {
                   <span className="text-xs text-gray-500">{recientes.length} notificaciones</span>
                 </motion.div>
               </motion.div>
-            ) : (
+          ) : (
               <motion.div
                 key="expanded"
                 layout
@@ -199,16 +172,16 @@ export default function Home() {
                     transition={{ duration: 0.25, delay: 0.2 }}
                     className="flex justify-center mt-2"
                   >
-                    <button
+                  <button
                       className="text-xs text-primary underline hover:text-yellow transition cursor-pointer select-none"
-                      onClick={() => setExpandidoRecientes(false)}
-                    >
-                      Contraer
-                    </button>
+                    onClick={() => setExpandidoRecientes(false)}
+                  >
+                    Contraer
+                  </button>
                   </motion.div>
-                )}
+              )}
               </motion.div>
-            )}
+          )}
           </AnimatePresence>
         </div>
       </div>
@@ -227,7 +200,7 @@ export default function Home() {
                 className="cursor-pointer select-none"
                 onClick={() => setExpandidoPasadas(true)}
               >
-                {/* Stack visual */}
+              {/* Stack visual */}
                 <motion.div
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 0.7, y: 0 }}
@@ -253,7 +226,7 @@ export default function Home() {
                   <span className="text-xs text-gray-500">{pasadas.length} notificaciones</span>
                 </motion.div>
               </motion.div>
-            ) : (
+          ) : (
               <motion.div
                 key="expanded"
                 layout
@@ -290,16 +263,16 @@ export default function Home() {
                     transition={{ duration: 0.25, delay: 0.2 }}
                     className="flex justify-center mt-2"
                   >
-                    <button
+                  <button
                       className="text-xs text-primary underline hover:text-yellow transition cursor-pointer select-none"
-                      onClick={() => setExpandidoPasadas(false)}
-                    >
-                      Contraer
-                    </button>
+                    onClick={() => setExpandidoPasadas(false)}
+                  >
+                    Contraer
+                  </button>
                   </motion.div>
-                )}
+              )}
               </motion.div>
-            )}
+          )}
           </AnimatePresence>
         </div>
       </div>
@@ -342,7 +315,7 @@ export default function Home() {
                   whileHover={{ scale: 1.1, rotate: 90 }}
                   whileTap={{ scale: 0.9 }}
                   onClick={() => setMostrarODS(false)}
-                  className="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors duration-200"
+                  className="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors duration-200 cursor-pointer"
                 >
                   <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -420,7 +393,7 @@ export default function Home() {
                   whileHover={{ scale: 1.1, rotate: 90 }}
                   whileTap={{ scale: 0.9 }}
                   onClick={() => setMostrarSobreNosotros(false)}
-                  className="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors duration-200"
+                  className="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors duration-200 cursor-pointer"
                 >
                   <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

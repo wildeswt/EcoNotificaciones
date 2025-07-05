@@ -38,11 +38,11 @@ const Notificacion: React.FC<NotificacionProps> = ({
             <button
               type="button"
               onClick={onRemove}
-              className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center hover:bg-red-100 group"
+              className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 group cursor-pointer"
               tabIndex={0}
               aria-label="Eliminar notificación"
             >
-              <svg className="w-3 h-3 text-gray-400 group-hover:text-red-500" fill="none" stroke="currentColor" viewBox="0 0 20 20">
+              <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 20 20">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 6l8 8M6 14L14 6" />
               </svg>
             </button>
