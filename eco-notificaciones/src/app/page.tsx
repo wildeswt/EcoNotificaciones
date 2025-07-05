@@ -2,6 +2,7 @@
 import Image from "next/image";
 import Notificacion from "./Notificacion";
 import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const notificacionesRecientes = [
   {
@@ -61,76 +62,195 @@ export default function Home() {
       <div className="w-full max-w-md mt-6">
         <h2 className="text-xl font-semibold mb-4 text-primary px-2">Recientes</h2>
         <div className="relative min-h-[80px]">
-          {notificacionesRecientes.length > 1 && !expandidoRecientes ? (
-            <div className="cursor-pointer select-none" onClick={() => setExpandidoRecientes(true)}>
-              {/* Stack visual */}
-              <div className="absolute left-0 right-0 top-2 z-0 scale-95 blur-[1px] opacity-70">
-                <Notificacion {...notificacionesRecientes[1]} />
-              </div>
-              <div className="relative z-10">
-                <Notificacion {...notificacionesRecientes[0]} />
-              </div>
-              <div className="flex justify-center mt-2">
-                <span className="text-xs text-gray-500">{notificacionesRecientes.length} notificaciones</span>
-              </div>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {notificacionesRecientes.map((n, i) => (
-                <Notificacion key={i} {...n} />
-              ))}
-              {notificacionesRecientes.length > 1 && (
-                <div className="flex justify-center mt-2">
-                  <button
-                    className="text-xs text-primary underline hover:text-yellow transition"
-                    onClick={() => setExpandidoRecientes(false)}
+          <AnimatePresence mode="wait">
+            {notificacionesRecientes.length > 1 && !expandidoRecientes ? (
+              <motion.div
+                key="stacked"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.25, ease: "easeOut" }}
+                className="cursor-pointer select-none"
+                onClick={() => setExpandidoRecientes(true)}
+              >
+                {/* Stack visual */}
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 0.7, y: 0 }}
+                  transition={{ duration: 0.3, delay: 0.05 }}
+                  className="absolute left-0 right-0 top-2 z-0 scale-95 blur-[1px]"
+                >
+                  <Notificacion {...notificacionesRecientes[1]} />
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="relative z-10"
+                >
+                  <Notificacion {...notificacionesRecientes[0]} />
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.2, delay: 0.15 }}
+                  className="flex justify-center mt-2"
+                >
+                  <span className="text-xs text-gray-500">{notificacionesRecientes.length} notificaciones</span>
+                </motion.div>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="expanded"
+                layout
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className="space-y-3"
+              >
+                <AnimatePresence>
+                  {notificacionesRecientes.map((n, i) => (
+                    <motion.div
+                      key={i}
+                      layout
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ 
+                        duration: 0.25, 
+                        delay: i * 0.08,
+                        ease: "easeOut"
+                      }}
+                    >
+                      <Notificacion {...n} />
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+                {notificacionesRecientes.length > 1 && (
+                  <motion.div
+                    layout
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.25, delay: 0.2 }}
+                    className="flex justify-center mt-2"
                   >
-                    Contraer
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
+                    <button
+                      className="text-xs text-primary underline hover:text-yellow transition cursor-pointer select-none"
+                      onClick={() => setExpandidoRecientes(false)}
+                    >
+                      Contraer
+                    </button>
+                  </motion.div>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 
       <div className="w-full max-w-md mt-6">
         <h2 className="text-xl font-semibold mb-4 text-primary px-2">Pasadas</h2>
         <div className="relative min-h-[80px]">
-          {notificacionesPasadas.length > 1 && !expandidoPasadas ? (
-            <div className="cursor-pointer select-none" onClick={() => setExpandidoPasadas(true)}>
-              {/* Stack visual */}
-              <div className="absolute left-0 right-0 top-2 z-0 scale-95 blur-[1px] opacity-70">
-                <Notificacion {...notificacionesPasadas[1]} />
-              </div>
-              <div className="relative z-10">
-                <Notificacion {...notificacionesPasadas[0]} />
-              </div>
-              <div className="flex justify-center mt-2">
-                <span className="text-xs text-gray-500">{notificacionesPasadas.length} notificaciones</span>
-              </div>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {notificacionesPasadas.map((n, i) => (
-                <Notificacion key={i} {...n} />
-              ))}
-              {notificacionesPasadas.length > 1 && (
-                <div className="flex justify-center mt-2">
-                  <button
-                    className="text-xs text-primary underline hover:text-yellow transition"
-                    onClick={() => setExpandidoPasadas(false)}
+          <AnimatePresence mode="wait">
+            {notificacionesPasadas.length > 1 && !expandidoPasadas ? (
+              <motion.div
+                key="stacked"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.25, ease: "easeOut" }}
+                className="cursor-pointer select-none"
+                onClick={() => setExpandidoPasadas(true)}
+              >
+                {/* Stack visual */}
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 0.7, y: 0 }}
+                  transition={{ duration: 0.3, delay: 0.05 }}
+                  className="absolute left-0 right-0 top-2 z-0 scale-95 blur-[1px]"
+                >
+                  <Notificacion {...notificacionesPasadas[1]} />
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="relative z-10"
+                >
+                  <Notificacion {...notificacionesPasadas[0]} />
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.2, delay: 0.15 }}
+                  className="flex justify-center mt-2"
+                >
+                  <span className="text-xs text-gray-500">{notificacionesPasadas.length} notificaciones</span>
+                </motion.div>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="expanded"
+                layout
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className="space-y-3"
+              >
+                <AnimatePresence>
+                  {notificacionesPasadas.map((n, i) => (
+                    <motion.div
+                      key={i}
+                      layout
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ 
+                        duration: 0.25, 
+                        delay: i * 0.08,
+                        ease: "easeOut"
+                      }}
+                    >
+                      <Notificacion {...n} />
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+                {notificacionesPasadas.length > 1 && (
+                  <motion.div
+                    layout
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.25, delay: 0.2 }}
+                    className="flex justify-center mt-2"
                   >
-                    Contraer
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
+                    <button
+                      className="text-xs text-primary underline hover:text-yellow transition cursor-pointer select-none"
+                      onClick={() => setExpandidoPasadas(false)}
+                    >
+                      Contraer
+                    </button>
+                  </motion.div>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 
-      <button className="fixed bottom-[10%] right-[5%] bg-yellow text-white rounded-full w-24 h-24 flex items-center justify-center shadow-lg transition hover:scale-105 cursor-pointer text-3xl font-bold">+</button>
+      <motion.button
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.98 }}
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.3 }}
+        className="fixed bottom-[10%] right-[5%] bg-yellow text-white rounded-full w-24 h-24 flex items-center justify-center shadow-lg cursor-pointer text-3xl font-bold"
+      >
+        +
+      </motion.button>
     </div>
   );
 }
