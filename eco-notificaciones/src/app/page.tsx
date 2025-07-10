@@ -83,7 +83,7 @@ export default function Home() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-beige p-4">
+    <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-gradient-to-br from-green-80 to-green-100">
       {/* Botones laterales - Posicionados a la izquierda */}
       <div className="fixed top-[10%] left-[5%] flex flex-col space-y-3">
         <BotonODS onClick={() => setMostrarODS(true)} />
