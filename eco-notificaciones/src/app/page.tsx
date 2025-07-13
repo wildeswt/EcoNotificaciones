@@ -106,208 +106,209 @@ export default function Home() {
           ease: "easeInOut"
         }}
       />
-      
-      {/* Contenido principal */}
-      <div className="relative z-10 flex flex-col items-center justify-center w-full">
-      {/* Botones laterales - Posicionados a la izquierda */}
-      <div className="fixed top-[10%] left-[5%] flex flex-col space-y-3">
-        <BotonODS onClick={() => setMostrarODS(true)} />
-        <BotonSobreNosotros onClick={() => setMostrarSobreNosotros(true)} />
-      </div>
+      <div className="w-[50vw] h-[80vh] bg-white z-20 rounded-2xl shadow-xl inset-ring-2 p-6">
+        {/* Contenido principal */}
+        <div className="relative z-10 flex flex-col items-center justify-center w-full">
+        {/* Botones laterales - Posicionados a la izquierda */}
+        <div className="fixed top-[10%] left-[5%] flex flex-col space-y-3">
+          <BotonODS onClick={() => setMostrarODS(true)} />
+          <BotonSobreNosotros onClick={() => setMostrarSobreNosotros(true)} />
+        </div>
 
-      <div className="text-center">
-        <h1 className="text-3xl md:text-4xl font-bold mb-2 text-primary">Eco-Notificaciones</h1>
-        <p className="text-md md:text-lg text-gray-700">Tu asistente de notificaciones ecológicas</p>
-      </div>
+        <div className="text-center">
+          <h1 className="text-3xl md:text-4xl font-bold mb-2 text-primary">Eco-Notificaciones</h1>
+          <p className="text-md md:text-lg text-gray-700">Tu asistente de notificaciones ecológicas</p>
+        </div>
 
-      <div className="w-full max-w-md mt-6">
-        <h2 className="text-xl font-semibold mb-4 text-primary px-2">Recientes</h2>
-        <div className="relative min-h-[80px]">
-          <AnimatePresence mode="wait">
-            {recientes.length > 1 && !expandidoRecientes ? (
-              <motion.div
-                key="stacked"
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.25, ease: "easeOut" }}
-                className="cursor-pointer select-none"
-                onClick={() => setExpandidoRecientes(true)}
-              >
-              {/* Stack visual */}
+        <div className="w-full max-w-md mt-6">
+          <h2 className="text-xl font-semibold mb-4 text-primary px-2">Recientes</h2>
+          <div className="relative min-h-[80px]">
+            <AnimatePresence mode="wait">
+              {recientes.length > 1 && !expandidoRecientes ? (
                 <motion.div
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 0.7, y: 0 }}
-                  transition={{ duration: 0.3, delay: 0.05 }}
-                  className="absolute left-0 right-0 top-2 z-0 scale-95 blur-[1px]"
+                  key="stacked"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.25, ease: "easeOut" }}
+                  className="cursor-pointer select-none"
+                  onClick={() => setExpandidoRecientes(true)}
                 >
-                  <Notificacion {...recientes[1]} expandida={false} />
-                </motion.div>
-                <motion.div
-                  initial={{ opacity: 0, y: -8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                  className="relative z-10"
-                >
-                  <Notificacion {...recientes[0]} expandida={false} />
-                </motion.div>
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.2, delay: 0.15 }}
-                  className="flex justify-center mt-2"
-                >
-                  <span className="text-xs text-gray-500">{recientes.length} notificaciones</span>
-                </motion.div>
-              </motion.div>
-          ) : (
-              <motion.div
-                key="expanded"
-                layout
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3, ease: "easeInOut" }}
-                className="space-y-3"
-              >
-                <AnimatePresence>
-                  {recientes.map((n, i) => (
-                    <motion.div
-                      key={i}
-                      layout
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ 
-                        duration: 0.25, 
-                        delay: i * 0.08,
-                        ease: "easeOut"
-                      }}
-                    >
-                      <Notificacion {...n} onRemove={() => eliminarNotificacionReciente(i)} expandida={true} />
-                    </motion.div>
-                  ))}
-                </AnimatePresence>
-                {recientes.length > 1 && (
+                {/* Stack visual */}
                   <motion.div
-                    layout
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 0.7, y: 0 }}
+                    transition={{ duration: 0.3, delay: 0.05 }}
+                    className="absolute left-0 right-0 top-2 z-0 scale-95 blur-[1px]"
+                  >
+                    <Notificacion {...recientes[1]} expandida={false} />
+                  </motion.div>
+                  <motion.div
+                    initial={{ opacity: 0, y: -8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="relative z-10"
+                  >
+                    <Notificacion {...recientes[0]} expandida={false} />
+                  </motion.div>
+                  <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.25, delay: 0.2 }}
+                    transition={{ duration: 0.2, delay: 0.15 }}
                     className="flex justify-center mt-2"
                   >
-                  <button
-                      className="text-xs text-primary underline hover:text-yellow transition cursor-pointer select-none"
-                    onClick={() => setExpandidoRecientes(false)}
-                  >
-                    Contraer
-                  </button>
+                    <span className="text-xs text-gray-500">{recientes.length} notificaciones</span>
                   </motion.div>
-              )}
-              </motion.div>
-          )}
-          </AnimatePresence>
-        </div>
-      </div>
-
-      <div className="w-full max-w-md mt-6">
-        <h2 className="text-xl font-semibold mb-4 text-primary px-2">Pasadas</h2>
-        <div className="relative min-h-[80px]">
-          <AnimatePresence mode="wait">
-            {pasadas.length > 1 && !expandidoPasadas ? (
-              <motion.div
-                key="stacked"
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.25, ease: "easeOut" }}
-                className="cursor-pointer select-none"
-                onClick={() => setExpandidoPasadas(true)}
-              >
-              {/* Stack visual */}
-                <motion.div
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 0.7, y: 0 }}
-                  transition={{ duration: 0.3, delay: 0.05 }}
-                  className="absolute left-0 right-0 top-2 z-0 scale-95 blur-[1px]"
-                >
-                  <Notificacion {...pasadas[1]} expandida={false} />
                 </motion.div>
+            ) : (
                 <motion.div
-                  initial={{ opacity: 0, y: -8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                  className="relative z-10"
-                >
-                  <Notificacion {...pasadas[0]} expandida={false} />
-                </motion.div>
-                <motion.div
+                  key="expanded"
+                  layout
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  transition={{ duration: 0.2, delay: 0.15 }}
-                  className="flex justify-center mt-2"
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3, ease: "easeInOut" }}
+                  className="space-y-3"
                 >
-                  <span className="text-xs text-gray-500">{pasadas.length} notificaciones</span>
-                </motion.div>
-              </motion.div>
-          ) : (
-              <motion.div
-                key="expanded"
-                layout
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3, ease: "easeInOut" }}
-                className="space-y-3"
-              >
-                <AnimatePresence>
-                  {pasadas.map((n, i) => (
+                  <AnimatePresence>
+                    {recientes.map((n, i) => (
+                      <motion.div
+                        key={i}
+                        layout
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ 
+                          duration: 0.25, 
+                          delay: i * 0.08,
+                          ease: "easeOut"
+                        }}
+                      >
+                        <Notificacion {...n} onRemove={() => eliminarNotificacionReciente(i)} expandida={true} />
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                  {recientes.length > 1 && (
                     <motion.div
-                      key={i}
                       layout
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ 
-                        duration: 0.25, 
-                        delay: i * 0.08,
-                        ease: "easeOut"
-                      }}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.25, delay: 0.2 }}
+                      className="flex justify-center mt-2"
                     >
-                      <Notificacion {...n} onRemove={() => eliminarNotificacionPasada(i)} expandida={true} />
+                    <button
+                        className="text-xs text-primary underline hover:text-yellow transition cursor-pointer select-none"
+                      onClick={() => setExpandidoRecientes(false)}
+                    >
+                      Contraer
+                    </button>
                     </motion.div>
-                  ))}
-                </AnimatePresence>
-                {pasadas.length > 1 && (
+                )}
+                </motion.div>
+            )}
+            </AnimatePresence>
+          </div>
+        </div>
+
+        <div className="w-full max-w-md mt-6">
+          <h2 className="text-xl font-semibold mb-4 text-primary px-2">Pasadas</h2>
+          <div className="relative min-h-[80px]">
+            <AnimatePresence mode="wait">
+              {pasadas.length > 1 && !expandidoPasadas ? (
+                <motion.div
+                  key="stacked"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.25, ease: "easeOut" }}
+                  className="cursor-pointer select-none"
+                  onClick={() => setExpandidoPasadas(true)}
+                >
+                {/* Stack visual */}
                   <motion.div
-                    layout
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 0.7, y: 0 }}
+                    transition={{ duration: 0.3, delay: 0.05 }}
+                    className="absolute left-0 right-0 top-2 z-0 scale-95 blur-[1px]"
+                  >
+                    <Notificacion {...pasadas[1]} expandida={false} />
+                  </motion.div>
+                  <motion.div
+                    initial={{ opacity: 0, y: -8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="relative z-10"
+                  >
+                    <Notificacion {...pasadas[0]} expandida={false} />
+                  </motion.div>
+                  <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.25, delay: 0.2 }}
+                    transition={{ duration: 0.2, delay: 0.15 }}
                     className="flex justify-center mt-2"
                   >
-                  <button
-                      className="text-xs text-primary underline hover:text-yellow transition cursor-pointer select-none"
-                    onClick={() => setExpandidoPasadas(false)}
-                  >
-                    Contraer
-                  </button>
+                    <span className="text-xs text-gray-500">{pasadas.length} notificaciones</span>
                   </motion.div>
-              )}
-              </motion.div>
-          )}
-          </AnimatePresence>
+                </motion.div>
+            ) : (
+                <motion.div
+                  key="expanded"
+                  layout
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3, ease: "easeInOut" }}
+                  className="space-y-3"
+                >
+                  <AnimatePresence>
+                    {pasadas.map((n, i) => (
+                      <motion.div
+                        key={i}
+                        layout
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ 
+                          duration: 0.25, 
+                          delay: i * 0.08,
+                          ease: "easeOut"
+                        }}
+                      >
+                        <Notificacion {...n} onRemove={() => eliminarNotificacionPasada(i)} expandida={true} />
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                  {pasadas.length > 1 && (
+                    <motion.div
+                      layout
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.25, delay: 0.2 }}
+                      className="flex justify-center mt-2"
+                    >
+                    <button
+                        className="text-xs text-primary underline hover:text-yellow transition cursor-pointer select-none"
+                      onClick={() => setExpandidoPasadas(false)}
+                    >
+                      Contraer
+                    </button>
+                    </motion.div>
+                )}
+                </motion.div>
+            )}
+            </AnimatePresence>
+          </div>
         </div>
-      </div>
 
-              <BotonAgregarEvento onClick={() => setMostrarAgregarEvento(true)} />
+                <BotonAgregarEvento onClick={() => setMostrarAgregarEvento(true)} />
 
-      {/* Modales */}
-      <ModalODS isOpen={mostrarODS} onClose={() => setMostrarODS(false)} />
-      <ModalSobreNosotros isOpen={mostrarSobreNosotros} onClose={() => setMostrarSobreNosotros(false)} />
-      <ModalAgregarEvento isOpen={mostrarAgregarEvento} onClose={() => setMostrarAgregarEvento(false)} />
+        {/* Modales */}
+        <ModalODS isOpen={mostrarODS} onClose={() => setMostrarODS(false)} />
+        <ModalSobreNosotros isOpen={mostrarSobreNosotros} onClose={() => setMostrarSobreNosotros(false)} />
+        <ModalAgregarEvento isOpen={mostrarAgregarEvento} onClose={() => setMostrarAgregarEvento(false)} />
+        </div>
       </div>
     </div>
   );
