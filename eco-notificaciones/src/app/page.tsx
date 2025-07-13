@@ -123,11 +123,15 @@ export default function Home() {
         {/* Contenido principal */}
         <div className="relative z-10 flex flex-col items-center justify-center w-full h-full">
 
-        <div className="text-center mb-8">
+        <div
+          className="text-center mb-8 sticky top-0 z-20 pt-2 pb-4 w-full"
+        >
           <h1 className="text-4xl md:text-5xl font-bold mb-3 text-primary bg-gradient-to-r from-green-600 to-green-800 bg-clip-text text-transparent">
             Eco-Notificaciones
           </h1>
-          <p className="text-lg md:text-xl text-gray-600 font-medium">Tu asistente de notificaciones ecológicas</p>
+          <p className="text-lg md:text-xl text-gray-600 font-medium">
+            Tu asistente de notificaciones ecológicas
+          </p>
         </div>
 
         <div className="w-full max-w-md mt-6">
