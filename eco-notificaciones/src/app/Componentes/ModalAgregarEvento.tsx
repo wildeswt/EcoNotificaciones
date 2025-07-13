@@ -14,7 +14,9 @@ export default function ModalAgregarEvento({ isOpen, onClose }: ModalAgregarEven
   const [tipo_ev, setTipoEv] = useState("");
   const [fecha_ev, setFechaEv] = useState("");
   const [hora_inicio_ev, setHoraInicioEv] = useState("");
+  const [hora_inicio_ampm, setHoraInicioAMPM] = useState("AM");
   const [hora_fin_ev, setHoraFinEv] = useState("");
+  const [hora_fin_ampm, setHoraFinAMPM] = useState("AM");
   const [localizacion_ev, setLocalizacionEv] = useState("");
 
   return (
@@ -103,12 +105,25 @@ export default function ModalAgregarEvento({ isOpen, onClose }: ModalAgregarEven
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Hora de inicio
                   </label>
-                  <input
-                    type="time"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                    value={hora_inicio_ev}
-                    onChange={e => setHoraInicioEv(e.target.value)}
-                  />
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      pattern="^(0[1-9]|1[0-2]):[0-5][0-9]$"
+                      placeholder="hh:mm"
+                      maxLength={5}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      value={hora_inicio_ev}
+                      onChange={e => setHoraInicioEv(e.target.value)}
+                    />
+                    <select
+                      className="px-2 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      value={hora_inicio_ampm}
+                      onChange={e => setHoraInicioAMPM(e.target.value)}
+                    >
+                      <option value="AM">AM</option>
+                      <option value="PM">PM</option>
+                    </select>
+                  </div>
                 </div>
 
                 {/* Hora de fin */}
@@ -116,12 +131,25 @@ export default function ModalAgregarEvento({ isOpen, onClose }: ModalAgregarEven
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Hora de fin
                   </label>
-                  <input
-                    type="time"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                    value={hora_fin_ev}
-                    onChange={e => setHoraFinEv(e.target.value)}
-                  />
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      pattern="^(0[1-9]|1[0-2]):[0-5][0-9]$"
+                      placeholder="hh:mm"
+                      maxLength={5}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      value={hora_fin_ev}
+                      onChange={e => setHoraFinEv(e.target.value)}
+                    />
+                    <select
+                      className="px-2 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      value={hora_fin_ampm}
+                      onChange={e => setHoraFinAMPM(e.target.value)}
+                    >
+                      <option value="AM">AM</option>
+                      <option value="PM">PM</option>
+                    </select>
+                  </div>
                 </div>
 
                 {/* Localización */}
@@ -174,11 +202,14 @@ export default function ModalAgregarEvento({ isOpen, onClose }: ModalAgregarEven
                       try {
                         const eventos = await fetchEvents();
                         const nuevo = eventos.length + 1;
+                        // Formatear hora inicio y fin a 'hh:mm AM/PM'
+                        const horaInicioFormateada = hora_inicio_ev ? `${hora_inicio_ev}${hora_inicio_ampm ? ' ' + hora_inicio_ampm : ''}`.replace(/^([0-9]{2}):([0-9]{2})/, (m, h, min) => `${('0' + ((+h % 12) || 12)).slice(-2)}:${min}`) : '';
+                        const horaFinFormateada = hora_fin_ev ? `${hora_fin_ev}${hora_fin_ampm ? ' ' + hora_fin_ampm : ''}`.replace(/^([0-9]{2}):([0-9]{2})/, (m, h, min) => `${('0' + ((+h % 12) || 12)).slice(-2)}:${min}`) : '';
                         const nuevaNotificacion = {
                           id: `e00${nuevo}`,
                           name: nombre_ev,
                           date: fecha_ev,
-                          time: `${hora_inicio_ev} - ${hora_fin_ev}`,
+                          time: `${horaInicioFormateada} - ${horaFinFormateada}`,
                           location: localizacion_ev,
                           description: descripcion_ev,
                           category: tipo_ev,
@@ -188,7 +219,9 @@ export default function ModalAgregarEvento({ isOpen, onClose }: ModalAgregarEven
                         setTipoEv("");
                         setFechaEv("");
                         setHoraInicioEv("");
+                        setHoraInicioAMPM("AM");
                         setHoraFinEv("");
+                        setHoraFinAMPM("AM");
                         setLocalizacionEv("");
                         await postEvent(nuevaNotificacion);
                         onClose();

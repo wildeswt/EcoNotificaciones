@@ -50,17 +50,20 @@ type Evento = {
         const hoy = getTodayString();
         const ahora = new Date();
 
-        // Función para convertir hora en formato 'HH:MM AM/PM' a minutos desde medianoche
+        // Función para convertir hora en formato 'HH:MM AM/PM' o 'HH:MM' (24h) a minutos desde medianoche
         function horaStringAMinutos(horaStr: string) {
-          // Soporta formatos como '09:00 AM', '16:34', etc.
-          let [hora, minutos] = [0, 0];
+          let hora = 0, minutos = 0;
           let ampm = '';
-          if (horaStr.includes('AM') || horaStr.includes('PM')) {
-            [hora, minutos] = horaStr.replace(/\s?(AM|PM)/, '').split(':').map(Number);
-            ampm = horaStr.includes('PM') ? 'PM' : 'AM';
+          const original = horaStr;
+          horaStr = horaStr.trim();
+          // Si tiene AM o PM
+          if (/am|pm/i.test(horaStr)) {
+            [hora, minutos] = horaStr.replace(/\s?(AM|PM|am|pm)/i, '').split(':').map(Number);
+            ampm = /pm/i.test(original) ? 'PM' : 'AM';
             if (ampm === 'PM' && hora !== 12) hora += 12;
             if (ampm === 'AM' && hora === 12) hora = 0;
           } else {
+            // Si es formato 24h
             [hora, minutos] = horaStr.split(':').map(Number);
           }
           return hora * 60 + minutos;
@@ -72,10 +75,14 @@ type Evento = {
         // Recientes: eventos de hoy y la hora actual está entre inicio y fin
         const recientesEventos = eventos.filter(e => {
           if (e.date !== hoy) return false;
+          if (e.time.trim().toLowerCase() === 'todo el día' || e.time.trim().toLowerCase() === 'todo el dia') {
+            return true;
+          }
           if (!e.time.includes('-')) return false;
           const [inicio, fin] = e.time.split('-').map(s => s.trim());
           const minInicio = horaStringAMinutos(inicio);
           const minFin = horaStringAMinutos(fin);
+          // Si la hora de inicio ya pasó pero la de fin no, también es reciente
           return minutosAhora >= minInicio && minutosAhora <= minFin;
         }).map(e => ({
           titulo: e.name,
@@ -90,9 +97,13 @@ type Evento = {
         const pasadasEventos = eventos.filter(e => {
           if (e.date < hoy) return true;
           if (e.date !== hoy) return false;
+          if (e.time.trim().toLowerCase() === 'todo el día' || e.time.trim().toLowerCase() === 'todo el dia') {
+            return false;
+          }
           if (!e.time.includes('-')) return false;
           const [inicio, fin] = e.time.split('-').map(s => s.trim());
           const minFin = horaStringAMinutos(fin);
+          // Solo pasa a pasadas si la hora actual es mayor a la de fin
           return minutosAhora > minFin;
         }).map(e => ({
           titulo: e.name,
