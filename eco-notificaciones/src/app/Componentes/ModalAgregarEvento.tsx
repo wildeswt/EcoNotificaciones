@@ -17,6 +17,7 @@ export default function ModalAgregarEvento({ isOpen, onClose }: ModalAgregarEven
   const [hora_inicio_ampm, setHoraInicioAMPM] = useState("AM");
   const [hora_fin_ev, setHoraFinEv] = useState("");
   const [hora_fin_ampm, setHoraFinAMPM] = useState("AM");
+  const [todoElDia, setTodoElDia] = useState(false);
   const [localizacion_ev, setLocalizacionEv] = useState("");
 
   return (
@@ -100,57 +101,73 @@ export default function ModalAgregarEvento({ isOpen, onClose }: ModalAgregarEven
                   />
                 </div>
 
-                {/* Hora de inicio */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Hora de inicio
-                  </label>
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      pattern="^(0[1-9]|1[0-2]):[0-5][0-9]$"
-                      placeholder="hh:mm"
-                      maxLength={5}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                      value={hora_inicio_ev}
-                      onChange={e => setHoraInicioEv(e.target.value)}
-                    />
-                    <select
-                      className="px-2 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                      value={hora_inicio_ampm}
-                      onChange={e => setHoraInicioAMPM(e.target.value)}
-                    >
-                      <option value="AM">AM</option>
-                      <option value="PM">PM</option>
-                    </select>
-                  </div>
+                {/* Todo el día */}
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id="todoElDia"
+                    checked={todoElDia}
+                    onChange={e => setTodoElDia(e.target.checked)}
+                  />
+                  <label htmlFor="todoElDia" className="text-sm font-medium text-gray-700">Evento todo el día</label>
                 </div>
 
-                {/* Hora de fin */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Hora de fin
-                  </label>
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      pattern="^(0[1-9]|1[0-2]):[0-5][0-9]$"
-                      placeholder="hh:mm"
-                      maxLength={5}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                      value={hora_fin_ev}
-                      onChange={e => setHoraFinEv(e.target.value)}
-                    />
-                    <select
-                      className="px-2 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                      value={hora_fin_ampm}
-                      onChange={e => setHoraFinAMPM(e.target.value)}
-                    >
-                      <option value="AM">AM</option>
-                      <option value="PM">PM</option>
-                    </select>
-                  </div>
-                </div>
+                {/* Hora de inicio y fin solo si no es todo el día */}
+                {!todoElDia && (
+                  <>
+                    {/* Hora de inicio */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Hora de inicio
+                      </label>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          pattern="^(0[1-9]|1[0-2]):[0-5][0-9]$"
+                          placeholder="hh:mm"
+                          maxLength={5}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                          value={hora_inicio_ev}
+                          onChange={e => setHoraInicioEv(e.target.value)}
+                        />
+                        <select
+                          className="px-2 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                          value={hora_inicio_ampm}
+                          onChange={e => setHoraInicioAMPM(e.target.value)}
+                        >
+                          <option value="AM">AM</option>
+                          <option value="PM">PM</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    {/* Hora de fin */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Hora de fin
+                      </label>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          pattern="^(0[1-9]|1[0-2]):[0-5][0-9]$"
+                          placeholder="hh:mm"
+                          maxLength={5}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                          value={hora_fin_ev}
+                          onChange={e => setHoraFinEv(e.target.value)}
+                        />
+                        <select
+                          className="px-2 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                          value={hora_fin_ampm}
+                          onChange={e => setHoraFinAMPM(e.target.value)}
+                        >
+                          <option value="AM">AM</option>
+                          <option value="PM">PM</option>
+                        </select>
+                      </div>
+                    </div>
+                  </>
+                )}
 
                 {/* Localización */}
                 <div>
@@ -209,7 +226,7 @@ export default function ModalAgregarEvento({ isOpen, onClose }: ModalAgregarEven
                           id: `e00${nuevo}`,
                           name: nombre_ev,
                           date: fecha_ev,
-                          time: `${horaInicioFormateada} - ${horaFinFormateada}`,
+                          time: todoElDia ? 'Todo el día' : `${horaInicioFormateada} - ${horaFinFormateada}`,
                           location: localizacion_ev,
                           description: descripcion_ev,
                           category: tipo_ev,
@@ -219,6 +236,7 @@ export default function ModalAgregarEvento({ isOpen, onClose }: ModalAgregarEven
                         setTipoEv("");
                         setFechaEv("");
                         setHoraInicioEv("");
+                        setTodoElDia(false);
                         setHoraInicioAMPM("AM");
                         setHoraFinEv("");
                         setHoraFinAMPM("AM");

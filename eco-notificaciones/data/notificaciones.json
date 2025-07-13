@@ -36,12 +36,39 @@
     "category": "reciclaje"
   },
   {
-    "id": "e005",
-    "name": "Reciclaje Exprés en el Campus 2",
+    "id": "e006",
+    "name": "Feria de Energías Renovables",
+    "date": "2025-07-20",
+    "time": "10:00 AM - 02:00 PM",
+    "location": "Auditorio Principal",
+    "description": "Descubre proyectos de energía solar y eólica desarrollados por estudiantes.",
+    "category": "energia"
+  },
+  {
+    "id": "e007",
+    "name": "Día de la Movilidad Sostenible",
     "date": "2025-07-13",
-    "time": "12:00 AM - 02:00 PM",
-    "location": "Edificio Central",
-    "description": "¡Trae tus botellas y participa en el reto de reciclaje!",
+    "time": "08:30 AM - 11:00 PM",
+    "location": "Plaza Central",
+    "description": "Participa charlas sobre transporte ecológico.",
+    "category": "transporte"
+  },
+  {
+    "id": "e008",
+    "name": "Campaña de Reducción de Plásticos",
+    "date": "2025-07-25",
+    "time": "09:00 AM - 01:00 PM",
+    "location": "Cafetería Universitaria",
+    "description": "Intercambia botellas plásticas por premios y aprende sobre alternativas sostenibles.",
     "category": "reciclaje"
+  },
+  {
+    "id": "e008",
+    "name": "cgngn",
+    "date": "2025-07-13",
+    "time": "Todo el día",
+    "location": "fccfh",
+    "description": "vdbg",
+    "category": "agua"
   }
 ]
