@@ -2,6 +2,7 @@
 import Image from "next/image";
 import Notificacion from "./Notificacion";
 import { useState, useEffect } from "react";
+import { fetchEvents } from "./apiEvents";
 import { motion, AnimatePresence } from "framer-motion";
 import { Leaf, Users } from "lucide-react";
 import BotonODS from "./BotonODS";
@@ -11,49 +12,14 @@ import ModalODS from "./ModalODS";
 import ModalSobreNosotros from "./ModalSobreNosotros";
 import ModalAgregarEvento from "./ModalAgregarEvento";
 
-const notificacionesRecientes = [
-  {
-    titulo: "Recordatorio de reciclaje",
-    descripcion: "Es hora de separar los residuos orgánicos",
-    hora: "12:30",
-    tiempo: "Ahora",
-    colorEstado: "bg-green-500"
-  },
-  {
-    titulo: "Consumo de energía",
-    descripcion: "Tu consumo está 15% por encima del promedio",
-    hora: "12:25",
-    tiempo: "Hace 5 min",
-    colorEstado: "bg-yellow-500"
-  }
-];
-
-const notificacionesPasadas = [
-  {
-    titulo: "Agua ahorrada",
-    descripcion: "Has ahorrado 5L de agua hoy",
-    hora: "11:30",
-    tiempo: "Hace 1 hora",
-    colorEstado: "bg-gray-400",
-    opacidad: "opacity-75"
-  },
-  {
-    titulo: "Transporte sostenible",
-    descripcion: "Has usado transporte público 3 veces esta semana",
-    hora: "10:30",
-    tiempo: "Hace 2 horas",
-    colorEstado: "bg-gray-400",
-    opacidad: "opacity-75"
-  },
-  {
-    titulo: "Huella de carbono",
-    descripcion: "Tu huella de carbono se redujo 2kg esta semana",
-    hora: "09:30",
-    tiempo: "Hace 3 horas",
-    colorEstado: "bg-gray-400",
-    opacidad: "opacity-75"
-  }
-];
+// Utilidad para formatear la fecha de hoy en formato 'YYYY-MM-DD'
+function getTodayString() {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
 
 export default function Home() {
   const [expandidoRecientes, setExpandidoRecientes] = useState(false);
@@ -61,8 +27,44 @@ export default function Home() {
   const [mostrarODS, setMostrarODS] = useState(false);
   const [mostrarSobreNosotros, setMostrarSobreNosotros] = useState(false);
   const [mostrarAgregarEvento, setMostrarAgregarEvento] = useState(false);
-  const [recientes, setRecientes] = useState(notificacionesRecientes);
-  const [pasadas, setPasadas] = useState(notificacionesPasadas);
+  const [recientes, setRecientes] = useState<any[]>([]);
+  const [pasadas, setPasadas] = useState<any[]>([]);
+
+  // Cargar eventos desde la API simulada y clasificarlos
+  useEffect(() => {
+    async function cargarEventos() {
+      try {
+        const eventos = await fetchEvents();
+        const hoy = getTodayString();
+
+        // Recientes: solo eventos de hoy, con hora completa y lugar en la descripción
+        const recientesEventos = eventos.filter(e => e.date === hoy).map(e => ({
+          titulo: e.name,
+          descripcion: `${e.description}\nLugar: ${e.location}`,
+          hora: e.time, // hora completa
+          tiempo: 'Hoy',
+          colorEstado: e.category === 'reciclaje' ? 'bg-green-500' : 'bg-yellow-500',
+          opacidad: '',
+        }));
+
+        // Pasadas: eventos anteriores a hoy
+        const pasadasEventos = eventos.filter(e => e.date < hoy).map(e => ({
+          titulo: e.name,
+          descripcion: `${e.description}\nLugar: ${e.location}`,
+          hora: e.time,
+          tiempo: 'Pasado',
+          colorEstado: 'bg-gray-400',
+          opacidad: 'opacity-75',
+        }));
+
+        setRecientes(recientesEventos);
+        setPasadas(pasadasEventos);
+      } catch (error) {
+        console.error('Error al cargar eventos:', error);
+      }
+    }
+    cargarEventos();
+  }, []);
 
   useEffect(() => {
     if (typeof window !== "undefined" && "Notification" in window) {
@@ -113,7 +115,7 @@ export default function Home() {
         <BotonSobreNosotros onClick={() => setMostrarSobreNosotros(true)} />
       </div>
 
-      <div className="w-[50vw] h-[90vh] bg-white/80 backdrop-blur-xl z-20 rounded-3xl shadow-2xl border border-white/20 p-8 relative overflow-hidden card-glow transition-all duration-300 flex flex-col justify-center items-center">
+      <div className="w-[50vw] h-[90vh] bg-white/90 backdrop-blur-xl z-20 rounded-3xl shadow-2xl border border-white/20 p-8 relative overflow-hidden card-glow transition-all duration-300 flex flex-col justify-center items-center">
         {/* Efecto de gradiente interno */}
         <div className="absolute inset-0 bg-gradient-to-br from-white/80 via-white/60 to-green-50/30 rounded-3xl"></div>
         {/* Efecto de borde brillante */}
