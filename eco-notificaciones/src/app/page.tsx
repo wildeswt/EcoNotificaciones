@@ -105,14 +105,17 @@ type Evento = {
           const minFin = horaStringAMinutos(fin);
           // Solo pasa a pasadas si la hora actual es mayor a la de fin
           return minutosAhora > minFin;
-        }).map(e => ({
-          titulo: e.name,
-          descripcion: `${e.description}\nLugar: ${e.location}`,
-          hora: e.time,
-          tiempo: 'Pasado',
-          colorEstado: 'bg-gray-400',
-          opacidad: 'opacity-75',
-        }));
+        }).map(e => {
+          const mostrarFecha = e.date < hoy;
+          return {
+            titulo: e.name,
+            descripcion: `${e.description}\nLugar: ${e.location}`,
+            hora: mostrarFecha ? e.date : e.time,
+            tiempo: 'Pasado',
+            colorEstado: 'bg-gray-400',
+            opacidad: 'opacity-75',
+          };
+        });
 
         setRecientes(recientesEventos);
         setPasadas(pasadasEventos);
