@@ -42,26 +42,59 @@ type Evento = {
 
   // Cargar eventos desde la API simulada y clasificarlos
   useEffect(() => {
+    let intervalId: NodeJS.Timeout;
+
     async function cargarEventos() {
       try {
         const eventos: Evento[] = await fetchEvents();
         const hoy = getTodayString();
+        const ahora = new Date();
 
-        // Recientes: solo eventos de hoy, con hora completa y lugar en la descripción
-        const recientesEventos = eventos.filter(e => e.date === hoy).map(e => ({
+        // Función para convertir hora en formato 'HH:MM AM/PM' a minutos desde medianoche
+        function horaStringAMinutos(horaStr: string) {
+          // Soporta formatos como '09:00 AM', '16:34', etc.
+          let [hora, minutos] = [0, 0];
+          let ampm = '';
+          if (horaStr.includes('AM') || horaStr.includes('PM')) {
+            [hora, minutos] = horaStr.replace(/\s?(AM|PM)/, '').split(':').map(Number);
+            ampm = horaStr.includes('PM') ? 'PM' : 'AM';
+            if (ampm === 'PM' && hora !== 12) hora += 12;
+            if (ampm === 'AM' && hora === 12) hora = 0;
+          } else {
+            [hora, minutos] = horaStr.split(':').map(Number);
+          }
+          return hora * 60 + minutos;
+        }
+
+        // Obtener hora actual en minutos desde medianoche
+        const minutosAhora = ahora.getHours() * 60 + ahora.getMinutes();
+
+        // Recientes: eventos de hoy y la hora actual está entre inicio y fin
+        const recientesEventos = eventos.filter(e => {
+          if (e.date !== hoy) return false;
+          if (!e.time.includes('-')) return false;
+          const [inicio, fin] = e.time.split('-').map(s => s.trim());
+          const minInicio = horaStringAMinutos(inicio);
+          const minFin = horaStringAMinutos(fin);
+          return minutosAhora >= minInicio && minutosAhora <= minFin;
+        }).map(e => ({
           titulo: e.name,
           descripcion: `${e.description}\nLugar: ${e.location}`,
-          hora: e.time, // hora completa
+          hora: e.time,
           tiempo: 'Hoy',
           colorEstado: e.category === 'reciclaje' ? 'bg-green-500' : 'bg-yellow-500',
           opacidad: '',
-          
         }));
 
-
-
-        // Pasadas: eventos anteriores a hoy
-        const pasadasEventos = eventos.filter((e: Evento) => e.date < hoy).map(e => ({
+        // Pasadas: eventos de hoy pero la hora actual ya pasó la hora de fin, o eventos de días anteriores
+        const pasadasEventos = eventos.filter(e => {
+          if (e.date < hoy) return true;
+          if (e.date !== hoy) return false;
+          if (!e.time.includes('-')) return false;
+          const [inicio, fin] = e.time.split('-').map(s => s.trim());
+          const minFin = horaStringAMinutos(fin);
+          return minutosAhora > minFin;
+        }).map(e => ({
           titulo: e.name,
           descripcion: `${e.description}\nLugar: ${e.location}`,
           hora: e.time,
@@ -70,16 +103,15 @@ type Evento = {
           opacidad: 'opacity-75',
         }));
 
-
-
         setRecientes(recientesEventos);
         setPasadas(pasadasEventos);
-        
       } catch (error) {
         console.error('Error al cargar eventos:', error);
       }
     }
     cargarEventos();
+    intervalId = setInterval(cargarEventos, 60000); // Actualiza cada minuto
+    return () => clearInterval(intervalId);
   }, [mostrarAgregarEvento]);
 
   // Función para eliminar notificación reciente
