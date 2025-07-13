@@ -125,6 +125,9 @@ export default function ModalAgregarEvento({ isOpen, onClose }: ModalAgregarEven
                           description: descripcion_ev,
                           category: tipo_ev,
                         };
+                        setNombreEv("");
+                        setDescripcionEv("");
+                        setTipoEv("");
                         postEvent(nuevaNotificacion);
                         onClose();
                       }
