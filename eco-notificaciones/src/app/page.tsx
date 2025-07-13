@@ -1,10 +1,8 @@
 "use client";
-import Image from "next/image";
 import Notificacion from "./Componentes/Notificacion";
 import { useState, useEffect } from "react";
 import { fetchEvents} from "./apiEvents";
 import { motion, AnimatePresence } from "framer-motion";
-import { Leaf, Users } from "lucide-react";
 import BotonODS from "./Componentes/BotonODS";
 import BotonSobreNosotros from "./Componentes/BotonSobreNosotros";
 import BotonAgregarEvento from "./Componentes/BotonAgregarEvento";
@@ -49,8 +47,6 @@ type Evento = {
         const eventos: Evento[] = await fetchEvents();
         const hoy = getTodayString();
 
-        console.log(eventos)
-
         // Recientes: solo eventos de hoy, con hora completa y lugar en la descripción
         const recientesEventos = eventos.filter(e => e.date === hoy).map(e => ({
           titulo: e.name,
@@ -79,12 +75,6 @@ type Evento = {
         setRecientes(recientesEventos);
         setPasadas(pasadasEventos);
         
-        //MOSTRAR EN CONSOLA LOS EVENTOS EXISTENTES
-
-        console.log(recientes)
-        console.log(pasadas)
-
-
       } catch (error) {
         console.error('Error al cargar eventos:', error);
       }
