@@ -106,22 +106,33 @@ export default function Home() {
           ease: "easeInOut"
         }}
       />
-      <div className="w-[50vw] h-[80vh] bg-white z-20 rounded-2xl shadow-xl inset-ring-2 p-6">
-        {/* Contenido principal */}
-        <div className="relative z-10 flex flex-col items-center justify-center w-full">
-        {/* Botones laterales - Posicionados a la izquierda */}
-        <div className="fixed top-[10%] left-[5%] flex flex-col space-y-3">
-          <BotonODS onClick={() => setMostrarODS(true)} />
-          <BotonSobreNosotros onClick={() => setMostrarSobreNosotros(true)} />
-        </div>
+      
+      {/* Botones laterales - Posicionados a la izquierda */}
+      <div className="fixed top-[10%] left-[5%] flex flex-col space-y-3 z-30">
+        <BotonODS onClick={() => setMostrarODS(true)} />
+        <BotonSobreNosotros onClick={() => setMostrarSobreNosotros(true)} />
+      </div>
 
-        <div className="text-center">
-          <h1 className="text-3xl md:text-4xl font-bold mb-2 text-primary">Eco-Notificaciones</h1>
-          <p className="text-md md:text-lg text-gray-700">Tu asistente de notificaciones ecológicas</p>
+      <div className="w-[50vw] h-[90vh] bg-white/80 backdrop-blur-xl z-20 rounded-3xl shadow-2xl border border-white/20 p-8 relative overflow-hidden card-glow transition-all duration-300 flex flex-col justify-center items-center">
+        {/* Efecto de gradiente interno */}
+        <div className="absolute inset-0 bg-gradient-to-br from-white/80 via-white/60 to-green-50/30 rounded-3xl"></div>
+        {/* Efecto de borde brillante */}
+        <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-green-400/20 via-transparent to-green-400/20 opacity-50"></div>
+        {/* Contenido principal */}
+        <div className="relative z-10 flex flex-col items-center justify-center w-full h-full">
+
+        <div className="text-center mb-8">
+          <h1 className="text-4xl md:text-5xl font-bold mb-3 text-primary bg-gradient-to-r from-green-600 to-green-800 bg-clip-text text-transparent">
+            Eco-Notificaciones
+          </h1>
+          <p className="text-lg md:text-xl text-gray-600 font-medium">Tu asistente de notificaciones ecológicas</p>
         </div>
 
         <div className="w-full max-w-md mt-6">
-          <h2 className="text-xl font-semibold mb-4 text-primary px-2">Recientes</h2>
+          <h2 className="text-xl font-semibold mb-4 text-primary px-2 flex items-center gap-2">
+            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            Recientes
+          </h2>
           <div className="relative min-h-[80px]">
             <AnimatePresence mode="wait">
               {recientes.length > 1 && !expandidoRecientes ? (
@@ -132,7 +143,10 @@ export default function Home() {
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ duration: 0.25, ease: "easeOut" }}
                   className="cursor-pointer select-none"
-                  onClick={() => setExpandidoRecientes(true)}
+                  onClick={() => {
+                    setExpandidoRecientes(true);
+                    setExpandidoPasadas(false);
+                  }}
                 >
                 {/* Stack visual */}
                   <motion.div
@@ -168,7 +182,7 @@ export default function Home() {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.3, ease: "easeInOut" }}
-                  className="space-y-3"
+                  className="max-h-48 overflow-y-auto space-y-3 pr-2"
                 >
                   <AnimatePresence>
                     {recientes.map((n, i) => (
@@ -212,7 +226,10 @@ export default function Home() {
         </div>
 
         <div className="w-full max-w-md mt-6">
-          <h2 className="text-xl font-semibold mb-4 text-primary px-2">Pasadas</h2>
+          <h2 className="text-xl font-semibold mb-4 text-primary px-2 flex items-center gap-2">
+            <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
+            Pasadas
+          </h2>
           <div className="relative min-h-[80px]">
             <AnimatePresence mode="wait">
               {pasadas.length > 1 && !expandidoPasadas ? (
@@ -223,7 +240,10 @@ export default function Home() {
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ duration: 0.25, ease: "easeOut" }}
                   className="cursor-pointer select-none"
-                  onClick={() => setExpandidoPasadas(true)}
+                  onClick={() => {
+                    setExpandidoPasadas(true);
+                    setExpandidoRecientes(false);
+                  }}
                 >
                 {/* Stack visual */}
                   <motion.div
@@ -259,7 +279,7 @@ export default function Home() {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.3, ease: "easeInOut" }}
-                  className="space-y-3"
+                  className="max-h-48 overflow-y-auto space-y-3 pr-2"
                 >
                   <AnimatePresence>
                     {pasadas.map((n, i) => (
@@ -301,15 +321,18 @@ export default function Home() {
             </AnimatePresence>
           </div>
         </div>
-
-                <BotonAgregarEvento onClick={() => setMostrarAgregarEvento(true)} />
-
-        {/* Modales */}
-        <ModalODS isOpen={mostrarODS} onClose={() => setMostrarODS(false)} />
-        <ModalSobreNosotros isOpen={mostrarSobreNosotros} onClose={() => setMostrarSobreNosotros(false)} />
-        <ModalAgregarEvento isOpen={mostrarAgregarEvento} onClose={() => setMostrarAgregarEvento(false)} />
         </div>
       </div>
+
+      {/* Botón de agregar evento - Posicionado a la derecha */}
+      <div className="fixed top-[10%] right-[5%] z-30">
+        <BotonAgregarEvento onClick={() => setMostrarAgregarEvento(true)} />
+      </div>
+
+      {/* Modales */}
+      <ModalODS isOpen={mostrarODS} onClose={() => setMostrarODS(false)} />
+      <ModalSobreNosotros isOpen={mostrarSobreNosotros} onClose={() => setMostrarSobreNosotros(false)} />
+      <ModalAgregarEvento isOpen={mostrarAgregarEvento} onClose={() => setMostrarAgregarEvento(false)} />
     </div>
   );
 }
