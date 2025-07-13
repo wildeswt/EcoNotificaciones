@@ -24,7 +24,7 @@ export default function ModalAgregarEvento({ isOpen, onClose }: ModalAgregarEven
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black/50 flex  justify-center z-50 p-4"
+          className="fixed inset-0 bg-black/50 flex  justify-center z-50 p-4 border-2 border-primary/20"
           onClick={onClose}
         >
           <motion.div
@@ -32,7 +32,7 @@ export default function ModalAgregarEvento({ isOpen, onClose }: ModalAgregarEven
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
-            className="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-y-auto"
+            className="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-y-auto border-2 border-primary/20"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header del Modal */}

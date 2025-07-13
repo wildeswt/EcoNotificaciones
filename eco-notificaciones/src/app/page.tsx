@@ -103,31 +103,31 @@ type Evento = {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4 relative overflow-hidden">
-      {/* Fondo animado */}
-      <motion.div
-        className="absolute inset-0"
-        animate={{
-          background: [
-            "radial-gradient(circle at 0% 0%, #bbf7d0 0%, transparent 50%), radial-gradient(circle at 100% 0%, #dcfce7 0%, transparent 50%), radial-gradient(circle at 0% 100%, #bbf7d0 0%, transparent 50%), radial-gradient(circle at 100% 100%, #dcfce7 0%, transparent 50%)",
-            "radial-gradient(circle at 20% 20%, #dcfce7 0%, transparent 50%), radial-gradient(circle at 80% 20%, #bbf7d0 0%, transparent 50%), radial-gradient(circle at 20% 80%, #dcfce7 0%, transparent 50%), radial-gradient(circle at 80% 80%, #bbf7d0 0%, transparent 50%)",
-            "radial-gradient(circle at 40% 40%, #bbf7d0 0%, transparent 50%), radial-gradient(circle at 60% 40%, #dcfce7 0%, transparent 50%), radial-gradient(circle at 40% 60%, #bbf7d0 0%, transparent 50%), radial-gradient(circle at 60% 60%, #dcfce7 0%, transparent 50%)",
-            "radial-gradient(circle at 0% 0%, #bbf7d0 0%, transparent 50%), radial-gradient(circle at 100% 0%, #dcfce7 0%, transparent 50%), radial-gradient(circle at 0% 100%, #bbf7d0 0%, transparent 50%), radial-gradient(circle at 100% 100%, #dcfce7 0%, transparent 50%)",
-          ]
-        }}
-        transition={{
-          duration: 8,
-          repeat: Infinity,
-          ease: "easeInOut"
+      {/* Fondo de imagen */}
+      <div
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100vw",
+          height: "100vh",
+          zIndex: 0,
+          backgroundImage: "url(/Assets/hojas.jpg)",
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          opacity: 0.7, // un poco más visible para el filtro
+          pointerEvents: "none",
+          filter: "brightness(0.7) blur(2px)", // oscurece y desenfoca
         }}
       />
-      
       {/* Botones laterales - Posicionados a la izquierda */}
       <div className="fixed top-[10%] left-[5%] flex flex-col space-y-3 z-30">
         <BotonODS onClick={() => setMostrarODS(true)} />
         <BotonSobreNosotros onClick={() => setMostrarSobreNosotros(true)} />
       </div>
 
-      <div className="w-[50vw] h-[90vh] bg-white/90 backdrop-blur-xl z-20 rounded-3xl shadow-2xl border border-white/20 p-8 relative overflow-hidden card-glow transition-all duration-300 flex flex-col justify-center items-center">
+      <div className="w-[50vw] h-[90vh] bg-white/90 backdrop-blur-xl z-20 rounded-3xl shadow-2xl border border-primary/20 p-8 relative overflow-hidden card-glow transition-all duration-300 flex flex-col justify-center  items-center">
         {/* Efecto de gradiente interno */}
         <div className="absolute inset-0 bg-gradient-to-br from-white/80 via-white/60 to-green-50/30 rounded-3xl"></div>
         {/* Efecto de borde brillante */}
