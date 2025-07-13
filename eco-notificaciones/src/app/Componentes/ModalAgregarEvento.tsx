@@ -1,6 +1,6 @@
 "use client";
 import { motion, AnimatePresence } from "framer-motion";
-import { postEvent } from "../apiEvents";
+import { fetchEvents, postEvent } from "../apiEvents";
 import { useState } from "react";
 
 interface ModalAgregarEventoProps {
@@ -9,20 +9,22 @@ interface ModalAgregarEventoProps {
 }
 
 export default function ModalAgregarEvento({ isOpen, onClose }: ModalAgregarEventoProps) {
-  
   const [nombre_ev, setNombreEv] = useState("");
   const [descripcion_ev, setDescripcionEv] = useState("");
   const [tipo_ev, setTipoEv] = useState("");
-  
+  const [fecha_ev, setFechaEv] = useState("");
+  const [hora_inicio_ev, setHoraInicioEv] = useState("");
+  const [hora_fin_ev, setHoraFinEv] = useState("");
+  const [localizacion_ev, setLocalizacionEv] = useState("");
 
   return (
-    <AnimatePresence>
+    <AnimatePresence >
       {isOpen && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+          className="fixed inset-0 bg-black/50 flex  justify-center z-50 p-4"
           onClick={onClose}
         >
           <motion.div
@@ -30,11 +32,11 @@ export default function ModalAgregarEvento({ isOpen, onClose }: ModalAgregarEven
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
-            className="bg-white rounded-2xl w-full max-w-md shadow-2xl"
+            className="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header del Modal */}
-            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+            <div className="flex  justify-between p-6 border-b border-gray-200">
               <div>
                 <h2 className="text-2xl font-bold text-primary">Agregar Evento</h2>
                 <p className="text-gray-600 mt-1">Crear nueva notificación ecológica</p>
@@ -68,6 +70,7 @@ export default function ModalAgregarEvento({ isOpen, onClose }: ModalAgregarEven
                   />
                 </div>
 
+
                 {/* Descripción */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -79,6 +82,46 @@ export default function ModalAgregarEvento({ isOpen, onClose }: ModalAgregarEven
                     placeholder="Describe el evento o notificación..."
                     value={descripcion_ev}
                     onChange={(e) => setDescripcionEv(e.target.value)}
+                  />
+                </div>
+
+                {/* Hora de inicio */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Hora de inicio
+                  </label>
+                  <input
+                    type="time"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    value={hora_inicio_ev}
+                    onChange={e => setHoraInicioEv(e.target.value)}
+                  />
+                </div>
+
+                {/* Hora de fin */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Hora de fin
+                  </label>
+                  <input
+                    type="time"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    value={hora_fin_ev}
+                    onChange={e => setHoraFinEv(e.target.value)}
+                  />
+                </div>
+
+                {/* Localización */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Localización
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    placeholder="Ej: Edificio Central"
+                    value={localizacion_ev}
+                    onChange={e => setLocalizacionEv(e.target.value)}
                   />
                 </div>
 
@@ -114,24 +157,29 @@ export default function ModalAgregarEvento({ isOpen, onClose }: ModalAgregarEven
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200"
-                    onClick={() => {
+                    onClick={async () => {
                       try {
+                        const eventos = await fetchEvents();
+                        const nuevo = eventos.length + 1;
                         const nuevaNotificacion = {
-                          id: "e005",
+                          id: `e00${nuevo}`,
                           name: nombre_ev,
-                          date: "2025-07-05",
-                          time: "09:00 AM - 04:00 PM",
-                          location: "Plaza Central de la Universidad",
+                          date: fecha_ev,
+                          time: `${hora_inicio_ev} - ${hora_fin_ev}`,
+                          location: localizacion_ev,
                           description: descripcion_ev,
                           category: tipo_ev,
                         };
                         setNombreEv("");
                         setDescripcionEv("");
                         setTipoEv("");
-                        postEvent(nuevaNotificacion);
+                        setFechaEv("");
+                        setHoraInicioEv("");
+                        setHoraFinEv("");
+                        setLocalizacionEv("");
+                        await postEvent(nuevaNotificacion);
                         onClose();
-                      }
-                      catch (error) {
+                      } catch (error) {
                         console.error("Error al crear el evento:", error);
                       }
                     }}

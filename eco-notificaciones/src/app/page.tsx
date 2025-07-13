@@ -30,11 +30,23 @@ export default function Home() {
   const [recientes, setRecientes] = useState<any[]>([]);
   const [pasadas, setPasadas] = useState<any[]>([]);
 
+type Evento = {
+  id: string;
+  name: string;
+  date: string;
+  time: string;
+  location: string;
+  description: string;
+  category: string;
+};
+
+
+
   // Cargar eventos desde la API simulada y clasificarlos
   useEffect(() => {
     async function cargarEventos() {
       try {
-        const eventos = await fetchEvents();
+        const eventos: Evento[] = await fetchEvents();
         const hoy = getTodayString();
 
         console.log(eventos)
@@ -53,7 +65,7 @@ export default function Home() {
 
 
         // Pasadas: eventos anteriores a hoy
-        const pasadasEventos = eventos.filter(e => e.date < hoy).map(e => ({
+        const pasadasEventos = eventos.filter((e: Evento) => e.date < hoy).map(e => ({
           titulo: e.name,
           descripcion: `${e.description}\nLugar: ${e.location}`,
           hora: e.time,
@@ -78,7 +90,7 @@ export default function Home() {
       }
     }
     cargarEventos();
-  }, []);
+  }, [mostrarAgregarEvento]);
 
   // Función para eliminar notificación reciente
   function eliminarNotificacionReciente(idx: number) {
@@ -334,7 +346,7 @@ export default function Home() {
       {/* Modales */}
       <ModalODS isOpen={mostrarODS} onClose={() => setMostrarODS(false)} />
       <ModalSobreNosotros isOpen={mostrarSobreNosotros} onClose={() => setMostrarSobreNosotros(false)} />
-      <ModalAgregarEvento isOpen={mostrarAgregarEvento} onClose={() => setMostrarAgregarEvento(false)} />
+      <ModalAgregarEvento isOpen={mostrarAgregarEvento} onClose={() => {setMostrarAgregarEvento(false) }} />
     </div>
   );
 }

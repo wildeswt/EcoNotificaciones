@@ -43,5 +43,23 @@
     "location": "Edificio Central",
     "description": "¡Trae tus botellas y participa en el reto de reciclaje!",
     "category": "reciclaje"
+  },
+  {
+    "id": "e006",
+    "name": "Nuevo evento creado de prueba",
+    "date": "2025-07-13",
+    "time": "18:00",
+    "location": "casa de Juan Pablo",
+    "description": "prueba con la nueva tarjeta 1",
+    "category": "otros"
+  },
+  {
+    "id": "e007",
+    "name": "asda",
+    "date": "",
+    "time": "12:34 - 12:55",
+    "location": "aadas",
+    "description": "asdasd",
+    "category": "transporte"
   }
 ]
