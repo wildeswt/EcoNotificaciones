@@ -1,5 +1,8 @@
 // apiEvents.ts
 
+import { body } from "framer-motion/m";
+import { METHODS } from "http";
+
 // Datos simulados para eventos universitarios sostenibles
 export const simulatedEventsData = [
   {
@@ -50,9 +53,29 @@ export const simulatedEventsData = [
   }
 ];
 
-//promises
 export async function fetchEvents() {
-  return new Promise<typeof simulatedEventsData>((resolve) => {
-    setTimeout(() => resolve(simulatedEventsData), 500);
-  });
+  return fetch('/api/notificaciones')
+  .then((res )=> (res.json()))
+  .catch((err)=> (console.error(err)))
 } 
+
+
+export async function postEvent(notificación:any) {
+  return fetch('/api/notificaciones', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(notificación),
+  })
+  .then((res) => {
+    if (!res.ok) {
+      throw new Error('Error al agregar notificación');
+    }
+    return res.json();
+  })
+  .catch((error) => {
+    console.error("Error al agregar notificación:", error);
+  });
+}
+

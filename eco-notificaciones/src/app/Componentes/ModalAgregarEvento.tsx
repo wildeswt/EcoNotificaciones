@@ -1,5 +1,7 @@
 "use client";
 import { motion, AnimatePresence } from "framer-motion";
+import { postEvent } from "../apiEvents";
+import { useState } from "react";
 
 interface ModalAgregarEventoProps {
   isOpen: boolean;
@@ -7,6 +9,12 @@ interface ModalAgregarEventoProps {
 }
 
 export default function ModalAgregarEvento({ isOpen, onClose }: ModalAgregarEventoProps) {
+  
+  const [nombre_ev, setNombreEv] = useState("");
+  const [descripcion_ev, setDescripcionEv] = useState("");
+  const [tipo_ev, setTipoEv] = useState("");
+  
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -55,6 +63,8 @@ export default function ModalAgregarEvento({ isOpen, onClose }: ModalAgregarEven
                     type="text"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                     placeholder="Ej: Recordatorio de reciclaje"
+                    value={nombre_ev}
+                    onChange={(e) => setNombreEv(e.target.value)}
                   />
                 </div>
 
@@ -67,6 +77,8 @@ export default function ModalAgregarEvento({ isOpen, onClose }: ModalAgregarEven
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
                     rows={3}
                     placeholder="Describe el evento o notificación..."
+                    value={descripcion_ev}
+                    onChange={(e) => setDescripcionEv(e.target.value)}
                   />
                 </div>
 
@@ -75,7 +87,10 @@ export default function ModalAgregarEvento({ isOpen, onClose }: ModalAgregarEven
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Tipo de evento
                   </label>
-                  <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                  <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    value={tipo_ev}
+                    onChange={(e) => setTipoEv(e.target.value)}
+                  >
                     <option value="">Seleccionar tipo</option>
                     <option value="reciclaje">Reciclaje</option>
                     <option value="energia">Ahorro de energía</option>
@@ -99,6 +114,24 @@ export default function ModalAgregarEvento({ isOpen, onClose }: ModalAgregarEven
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200"
+                    onClick={() => {
+                      try {
+                        const nuevaNotificacion = {
+                          id: "e005",
+                          name: nombre_ev,
+                          date: "2025-07-05",
+                          time: "09:00 AM - 04:00 PM",
+                          location: "Plaza Central de la Universidad",
+                          description: descripcion_ev,
+                          category: tipo_ev,
+                        };
+                        postEvent(nuevaNotificacion);
+                        onClose();
+                      }
+                      catch (error) {
+                        console.error("Error al crear el evento:", error);
+                      }
+                    }}
                   >
                     Crear Evento
                   </motion.button>

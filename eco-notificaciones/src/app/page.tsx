@@ -1,16 +1,16 @@
 "use client";
 import Image from "next/image";
-import Notificacion from "./Notificacion";
+import Notificacion from "./Componentes/Notificacion";
 import { useState, useEffect } from "react";
-import { fetchEvents } from "./apiEvents";
+import { fetchEvents} from "./apiEvents";
 import { motion, AnimatePresence } from "framer-motion";
 import { Leaf, Users } from "lucide-react";
-import BotonODS from "./BotonODS";
-import BotonSobreNosotros from "./BotonSobreNosotros";
-import BotonAgregarEvento from "./BotonAgregarEvento";
-import ModalODS from "./ModalODS";
-import ModalSobreNosotros from "./ModalSobreNosotros";
-import ModalAgregarEvento from "./ModalAgregarEvento";
+import BotonODS from "./Componentes/BotonODS";
+import BotonSobreNosotros from "./Componentes/BotonSobreNosotros";
+import BotonAgregarEvento from "./Componentes/BotonAgregarEvento";
+import ModalODS from "./Componentes/ModalODS";
+import ModalSobreNosotros from "./Componentes/ModalSobreNosotros";
+import ModalAgregarEvento from "./Componentes/ModalAgregarEvento";
 
 // Utilidad para formatear la fecha de hoy en formato 'YYYY-MM-DD'
 function getTodayString() {
@@ -37,6 +37,8 @@ export default function Home() {
         const eventos = await fetchEvents();
         const hoy = getTodayString();
 
+        console.log(eventos)
+
         // Recientes: solo eventos de hoy, con hora completa y lugar en la descripción
         const recientesEventos = eventos.filter(e => e.date === hoy).map(e => ({
           titulo: e.name,
@@ -45,7 +47,10 @@ export default function Home() {
           tiempo: 'Hoy',
           colorEstado: e.category === 'reciclaje' ? 'bg-green-500' : 'bg-yellow-500',
           opacidad: '',
+          
         }));
+
+
 
         // Pasadas: eventos anteriores a hoy
         const pasadasEventos = eventos.filter(e => e.date < hoy).map(e => ({
@@ -57,27 +62,22 @@ export default function Home() {
           opacidad: 'opacity-75',
         }));
 
+
+
         setRecientes(recientesEventos);
         setPasadas(pasadasEventos);
+        
+        //MOSTRAR EN CONSOLA LOS EVENTOS EXISTENTES
+
+        console.log(recientes)
+        console.log(pasadas)
+
+
       } catch (error) {
         console.error('Error al cargar eventos:', error);
       }
     }
     cargarEventos();
-  }, []);
-
-  useEffect(() => {
-    if (typeof window !== "undefined" && "Notification" in window) {
-      if (Notification.permission === "default") {
-        Notification.requestPermission().then(permission => {
-          if (permission === "granted") {
-            mostrarNotificacion();
-          }
-        });
-      } else if (Notification.permission === "granted") {
-        mostrarNotificacion();
-      }
-    }
   }, []);
 
   // Función para eliminar notificación reciente
@@ -337,19 +337,4 @@ export default function Home() {
       <ModalAgregarEvento isOpen={mostrarAgregarEvento} onClose={() => setMostrarAgregarEvento(false)} />
     </div>
   );
-}
-
-function mostrarNotificacion() {
-  const title = "¡Hola!";
-  const options = {
-    body: "Esta es una notificación de prueba",
-    icon: "/icono.png",
-    tag: "notificacion-prueba"
-  };
-  const notification = new Notification(title, options);
-
-  notification.addEventListener("click", () => {
-    window.open("https://www.ejemplo.com", "_blank");
-    notification.close();
-  });
 }
