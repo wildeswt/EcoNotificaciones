@@ -21,11 +21,7 @@ const Notificacion: React.FC<NotificacionProps> = ({
   onRemove,
   expandida = false
 }) => {
-
-  console.log(titulo,"\n" , descripcion,"\n", hora,"\n", tiempo)
-
   return (
-
     <div className={`text-secundary bg-white/20 backdrop-blur-lg rounded-2xl shadow-lg border border-white/30 p-4 hover:shadow-xl transition-all duration-200 cursor-pointer ${opacidad}`}>
       <div className="flex items-start justify-between">
         <div className="flex-1">
