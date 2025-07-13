@@ -19,6 +19,7 @@ export default function ModalAgregarEvento({ isOpen, onClose }: ModalAgregarEven
   const [hora_fin_ampm, setHoraFinAMPM] = useState("AM");
   const [todoElDia, setTodoElDia] = useState(false);
   const [localizacion_ev, setLocalizacionEv] = useState("");
+  const [errores, setErrores] = useState<{titulo?: string, fecha?: string, hora?: string}>({});
 
   return (
     <AnimatePresence >
@@ -66,11 +67,12 @@ export default function ModalAgregarEvento({ isOpen, onClose }: ModalAgregarEven
                   </label>
                   <input
                     type="text"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className={`w-full px-3 py-2 border ${errores.titulo ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent`}
                     placeholder="Ej: Recordatorio de reciclaje"
                     value={nombre_ev}
                     onChange={(e) => setNombreEv(e.target.value)}
                   />
+                  {errores.titulo && <p className="text-red-500 text-xs mt-1">{errores.titulo}</p>}
                 </div>
 
 
@@ -95,10 +97,17 @@ export default function ModalAgregarEvento({ isOpen, onClose }: ModalAgregarEven
                   </label>
                   <input
                     type="date"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    pattern="\\d{4}-\\d{2}-\\d{2}"
+                    inputMode="numeric"
+                    className={`w-full px-3 py-2 border ${errores.fecha ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent`}
                     value={fecha_ev}
-                    onChange={e => setFechaEv(e.target.value)}
+                    onChange={e => {
+                      // Solo permitir valores numéricos y guiones
+                      const val = e.target.value.replace(/[^0-9-]/g, "");
+                      setFechaEv(val);
+                    }}
                   />
+                  {errores.fecha && <p className="text-red-500 text-xs mt-1">{errores.fecha}</p>}
                 </div>
 
                 {/* Todo el día */}
@@ -123,12 +132,17 @@ export default function ModalAgregarEvento({ isOpen, onClose }: ModalAgregarEven
                       <div className="flex gap-2">
                         <input
                           type="text"
-                          pattern="^(0[1-9]|1[0-2]):[0-5][0-9]$"
+                          pattern="^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$"
                           placeholder="hh:mm"
                           maxLength={5}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                          inputMode="numeric"
+                          className={`w-full px-3 py-2 border ${errores.hora ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent`}
                           value={hora_inicio_ev}
-                          onChange={e => setHoraInicioEv(e.target.value)}
+                          onChange={e => {
+                            // Solo permitir números y ':'
+                            const val = e.target.value.replace(/[^0-9:]/g, "");
+                            setHoraInicioEv(val);
+                          }}
                         />
                         <select
                           className="px-2 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
@@ -149,12 +163,17 @@ export default function ModalAgregarEvento({ isOpen, onClose }: ModalAgregarEven
                       <div className="flex gap-2">
                         <input
                           type="text"
-                          pattern="^(0[1-9]|1[0-2]):[0-5][0-9]$"
+                          pattern="^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$"
                           placeholder="hh:mm"
                           maxLength={5}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                          inputMode="numeric"
+                          className={`w-full px-3 py-2 border ${errores.hora ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent`}
                           value={hora_fin_ev}
-                          onChange={e => setHoraFinEv(e.target.value)}
+                          onChange={e => {
+                            // Solo permitir números y ':'
+                            const val = e.target.value.replace(/[^0-9:]/g, "");
+                            setHoraFinEv(val);
+                          }}
                         />
                         <select
                           className="px-2 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
@@ -216,6 +235,15 @@ export default function ModalAgregarEvento({ isOpen, onClose }: ModalAgregarEven
                     whileTap={{ scale: 0.98 }}
                     className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200"
                     onClick={async () => {
+                      // Validaciones
+                      const nuevosErrores: {titulo?: string, fecha?: string, hora?: string} = {};
+                      if (!nombre_ev.trim()) nuevosErrores.titulo = "El título es obligatorio.";
+                      if (!fecha_ev.match(/^\d{4}-\d{2}-\d{2}$/)) nuevosErrores.fecha = "La fecha debe tener el formato YYYY-MM-DD.";
+                      if (!todoElDia && (!hora_inicio_ev.match(/^\d{2}:\d{2}$/) || !hora_fin_ev.match(/^\d{2}:\d{2}$/))) {
+                        nuevosErrores.hora = "La hora debe tener el formato hh:mm (solo números).";
+                      }
+                      setErrores(nuevosErrores);
+                      if (Object.keys(nuevosErrores).length > 0) return;
                       try {
                         const eventos = await fetchEvents();
                         const nuevo = eventos.length + 1;
@@ -241,6 +269,7 @@ export default function ModalAgregarEvento({ isOpen, onClose }: ModalAgregarEven
                         setHoraFinEv("");
                         setHoraFinAMPM("AM");
                         setLocalizacionEv("");
+                        setErrores({});
                         await postEvent(nuevaNotificacion);
                         onClose();
                       } catch (error) {
@@ -250,6 +279,14 @@ export default function ModalAgregarEvento({ isOpen, onClose }: ModalAgregarEven
                   >
                     Crear Evento
                   </motion.button>
+                {/* Mensaje de error general */}
+                {(errores.titulo || errores.fecha || errores.hora) && (
+                  <div className="text-red-500 text-xs mt-2">
+                    {errores.titulo && <div>{errores.titulo}</div>}
+                    {errores.fecha && <div>{errores.fecha}</div>}
+                    {errores.hora && <div>{errores.hora}</div>}
+                  </div>
+                )}
                 </div>
               </div>
             </div>
