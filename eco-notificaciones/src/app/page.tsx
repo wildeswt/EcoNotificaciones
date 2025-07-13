@@ -19,6 +19,53 @@ function getTodayString() {
   return `${year}-${month}-${day}`;
 }
 
+// --- TIPS AUTOMÁTICOS SISTÉMICOS ---
+
+// Devuelve una lista de tips activos según el día y la hora actual
+function getSystemTips(): any[] {
+  const ahora = new Date();
+  const diaSemana = ahora.getDay(); // 0: domingo, 1: lunes, ...
+  const minutosAhora = ahora.getHours() * 60 + ahora.getMinutes();
+  const tips: any[] = [];
+
+  // Lunes a las 8:00 AM
+  if (diaSemana === 1 && minutosAhora >= 8 * 60 && minutosAhora < 8 * 60 + 10) {
+    tips.push({
+      titulo: "Recuerda usar bolsas reutilizables",
+      descripcion: "¡Haz tu parte por el planeta!",
+      hora: "08:00 AM",
+      tiempo: "Hoy",
+      colorEstado: "bg-yellow-500",
+      opacidad: "",
+    });
+  }
+  // Viernes a las 7:30 AM
+  if (diaSemana === 7 && minutosAhora >= 7 * 60 + 30 && minutosAhora < 7 * 60 + 40) {
+    tips.push({
+      titulo: "Hoy es un buen día para usar bicicleta",
+      descripcion: "Reduce tu huella de carbono y haz ejercicio.",
+      hora: "07:30 AM",
+      tiempo: "Hoy",
+      colorEstado: "bg-green-500",
+      opacidad: "",
+    });
+  }
+  // Domingo a las 5:37 PM
+  if (diaSemana === 0 && minutosAhora >= 17 * 60 + 37 && minutosAhora < 17 * 60 + 40) {
+    tips.push({
+      titulo: "Domingo ecológico: ¡Desconecta aparatos que no uses!",
+      descripcion: "Aprovecha el domingo para ahorrar energía en casa.",
+      hora: "05:37 PM",
+      tiempo: "Hoy",
+      colorEstado: "bg-yellow-500",
+      opacidad: "",
+    });
+  }
+  // Puedes agregar más tips aquí...
+
+  return tips;
+}
+
 export default function Home() {
   const [expandidoRecientes, setExpandidoRecientes] = useState(false);
   const [expandidoPasadas, setExpandidoPasadas] = useState(false);
@@ -40,51 +87,67 @@ type Evento = {
 
 
 
-  // Cargar eventos desde la API simulada y clasificarlos
+  // --- UTILIDADES Y LISTENERS DE EVENTOS TEMPORALES (POE) ---
+
+  // Convierte una hora string a minutos desde medianoche (soporta 24h y 12h AM/PM)
+  function horaStringAMinutos(horaStr: string): number {
+    let hora = 0, minutos = 0;
+    let ampm = '';
+    const original = horaStr;
+    horaStr = horaStr.trim();
+    if (/am|pm/i.test(horaStr)) {
+      [hora, minutos] = horaStr.replace(/\s?(AM|PM|am|pm)/i, '').split(':').map(Number);
+      ampm = /pm/i.test(original) ? 'PM' : 'AM';
+      if (ampm === 'PM' && hora !== 12) hora += 12;
+      if (ampm === 'AM' && hora === 12) hora = 0;
+    } else {
+      [hora, minutos] = horaStr.split(':').map(Number);
+    }
+    return hora * 60 + minutos;
+  }
+
+  // Listener: ¿Es evento de todo el día?
+  function esTodoElDia(e: Evento): boolean {
+    const t = e.time.trim().toLowerCase();
+    return t === 'todo el día' || t === 'todo el dia';
+  }
+
+  // Listener: ¿El evento está en curso (reciente)?
+  function esEventoReciente(e: Evento, hoy: string, minutosAhora: number): boolean {
+    if (e.date !== hoy) return false;
+    if (esTodoElDia(e)) return true;
+    if (!e.time.includes('-')) return false;
+    const [inicio, fin] = e.time.split('-').map(s => s.trim());
+    const minInicio = horaStringAMinutos(inicio);
+    const minFin = horaStringAMinutos(fin);
+    return minutosAhora >= minInicio && minutosAhora <= minFin;
+  }
+
+  // Listener: ¿El evento ya terminó (pasado)?
+  function esEventoPasado(e: Evento, hoy: string, minutosAhora: number): boolean {
+    if (e.date < hoy) return true;
+    if (e.date !== hoy) return false;
+    if (esTodoElDia(e)) return false;
+    if (!e.time.includes('-')) return false;
+    const [inicio, fin] = e.time.split('-').map(s => s.trim());
+    const minFin = horaStringAMinutos(fin);
+    return minutosAhora > minFin;
+  }
+
+  // --- SCHEDULER: EMISOR DE EVENTOS TEMPORALES (POE) ---
   useEffect(() => {
     let intervalId: NodeJS.Timeout;
 
-    async function cargarEventos() {
+    // Scheduler: revisa el estado de los eventos cada minuto
+    async function scheduler() {
       try {
         const eventos: Evento[] = await fetchEvents();
         const hoy = getTodayString();
         const ahora = new Date();
-
-        // Función para convertir hora en formato 'HH:MM AM/PM' o 'HH:MM' (24h) a minutos desde medianoche
-        function horaStringAMinutos(horaStr: string) {
-          let hora = 0, minutos = 0;
-          let ampm = '';
-          const original = horaStr;
-          horaStr = horaStr.trim();
-          // Si tiene AM o PM
-          if (/am|pm/i.test(horaStr)) {
-            [hora, minutos] = horaStr.replace(/\s?(AM|PM|am|pm)/i, '').split(':').map(Number);
-            ampm = /pm/i.test(original) ? 'PM' : 'AM';
-            if (ampm === 'PM' && hora !== 12) hora += 12;
-            if (ampm === 'AM' && hora === 12) hora = 0;
-          } else {
-            // Si es formato 24h
-            [hora, minutos] = horaStr.split(':').map(Number);
-          }
-          return hora * 60 + minutos;
-        }
-
-        // Obtener hora actual en minutos desde medianoche
         const minutosAhora = ahora.getHours() * 60 + ahora.getMinutes();
 
-        // Recientes: eventos de hoy y la hora actual está entre inicio y fin
-        const recientesEventos = eventos.filter(e => {
-          if (e.date !== hoy) return false;
-          if (e.time.trim().toLowerCase() === 'todo el día' || e.time.trim().toLowerCase() === 'todo el dia') {
-            return true;
-          }
-          if (!e.time.includes('-')) return false;
-          const [inicio, fin] = e.time.split('-').map(s => s.trim());
-          const minInicio = horaStringAMinutos(inicio);
-          const minFin = horaStringAMinutos(fin);
-          // Si la hora de inicio ya pasó pero la de fin no, también es reciente
-          return minutosAhora >= minInicio && minutosAhora <= minFin;
-        }).map(e => ({
+        // Listeners: clasifican los eventos según la hora
+        const recientesEventos = eventos.filter(e => esEventoReciente(e, hoy, minutosAhora)).map(e => ({
           titulo: e.name,
           descripcion: `${e.description}\nLugar: ${e.location}`,
           hora: e.time,
@@ -93,19 +156,12 @@ type Evento = {
           opacidad: '',
         }));
 
-        // Pasadas: eventos de hoy pero la hora actual ya pasó la hora de fin, o eventos de días anteriores
-        const pasadasEventos = eventos.filter(e => {
-          if (e.date < hoy) return true;
-          if (e.date !== hoy) return false;
-          if (e.time.trim().toLowerCase() === 'todo el día' || e.time.trim().toLowerCase() === 'todo el dia') {
-            return false;
-          }
-          if (!e.time.includes('-')) return false;
-          const [inicio, fin] = e.time.split('-').map(s => s.trim());
-          const minFin = horaStringAMinutos(fin);
-          // Solo pasa a pasadas si la hora actual es mayor a la de fin
-          return minutosAhora > minFin;
-        }).map(e => {
+        // --- TIPS AUTOMÁTICOS SISTÉMICOS ---
+        const tips = getSystemTips();
+        // Combina tips automáticos con notificaciones recientes del usuario
+        setRecientes([...tips, ...recientesEventos]);
+
+        const pasadasEventos = eventos.filter(e => esEventoPasado(e, hoy, minutosAhora)).map(e => {
           const mostrarFecha = e.date < hoy;
           return {
             titulo: e.name,
@@ -117,14 +173,14 @@ type Evento = {
           };
         });
 
-        setRecientes(recientesEventos);
         setPasadas(pasadasEventos);
       } catch (error) {
         console.error('Error al cargar eventos:', error);
       }
     }
-    cargarEventos();
-    intervalId = setInterval(cargarEventos, 60000); // Actualiza cada minuto
+
+    scheduler();
+    intervalId = setInterval(scheduler, 60000); // Scheduler: cada minuto
     return () => clearInterval(intervalId);
   }, [mostrarAgregarEvento]);
 
