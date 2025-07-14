@@ -180,7 +180,7 @@ type Evento = {
     }
 
     scheduler();
-    intervalId = setInterval(scheduler, 60000); // Scheduler: cada minuto
+    intervalId = setInterval(scheduler, 1000); // Scheduler: cada minuto
     return () => clearInterval(intervalId);
   }, [mostrarAgregarEvento]);
 
