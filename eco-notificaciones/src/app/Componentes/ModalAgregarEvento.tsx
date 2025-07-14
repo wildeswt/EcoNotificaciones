@@ -1,7 +1,8 @@
 "use client";
 import { motion, AnimatePresence } from "framer-motion";
-import { fetchEvents, postEvent } from "../apiEvents";
+import { fetchEvents, createNotificationWithValidation } from "../apiEvents";
 import { useState } from "react";
+import { logAction } from "../utils/logger";
 
 interface ModalAgregarEventoProps {
   isOpen: boolean;
@@ -217,13 +218,10 @@ export default function ModalAgregarEvento({ isOpen, onClose }: ModalAgregarEven
                     className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200"
                     onClick={async () => {
                       try {
-                        const eventos = await fetchEvents();
-                        const nuevo = eventos.length + 1;
                         // Formatear hora inicio y fin a 'hh:mm AM/PM'
                         const horaInicioFormateada = hora_inicio_ev ? `${hora_inicio_ev}${hora_inicio_ampm ? ' ' + hora_inicio_ampm : ''}`.replace(/^([0-9]{2}):([0-9]{2})/, (m, h, min) => `${('0' + ((+h % 12) || 12)).slice(-2)}:${min}`) : '';
                         const horaFinFormateada = hora_fin_ev ? `${hora_fin_ev}${hora_fin_ampm ? ' ' + hora_fin_ampm : ''}`.replace(/^([0-9]{2}):([0-9]{2})/, (m, h, min) => `${('0' + ((+h % 12) || 12)).slice(-2)}:${min}`) : '';
                         const nuevaNotificacion = {
-                          id: `e00${nuevo}`,
                           name: nombre_ev,
                           date: fecha_ev,
                           time: todoElDia ? 'Todo el día' : `${horaInicioFormateada} - ${horaFinFormateada}`,
@@ -241,7 +239,7 @@ export default function ModalAgregarEvento({ isOpen, onClose }: ModalAgregarEven
                         setHoraFinEv("");
                         setHoraFinAMPM("AM");
                         setLocalizacionEv("");
-                        await postEvent(nuevaNotificacion);
+                        await createNotificationWithValidation(nuevaNotificacion);
                         onClose();
                       } catch (error) {
                         console.error("Error al crear el evento:", error);

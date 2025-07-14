@@ -61,5 +61,72 @@
     "location": "Cafetería Universitaria",
     "description": "Intercambia botellas plásticas por premios y aprende sobre alternativas sostenibles.",
     "category": "reciclaje"
+  },
+  {
+    "id": "e008",
+    "name": "XD",
+    "date": "2025-07-14",
+    "time": "Todo el día",
+    "location": "XD",
+    "description": "Holas",
+    "category": "otros"
+  },
+  {
+    "id": "e009",
+    "name": "",
+    "date": "",
+    "time": " - ",
+    "location": "",
+    "description": "",
+    "category": ""
+  },
+  {
+    "id": "e0010",
+    "name": "Hola",
+    "date": "2025-07-14",
+    "time": "07:10 PM - 07:11 PM",
+    "location": "XD",
+    "description": "XD",
+    "category": "otros"
+  },
+  {
+    "name": "XD",
+    "date": "2025-07-14",
+    "time": "Todo el día",
+    "location": "XD",
+    "description": "SAA",
+    "category": "transporte"
+  },
+  {
+    "name": "XD",
+    "date": "2025-07-14",
+    "time": "Todo el día",
+    "location": "XD",
+    "description": "SAA",
+    "category": "transporte"
+  },
+  {
+    "name": "DA",
+    "date": "2025-07-14",
+    "time": "Todo el día",
+    "location": "XD",
+    "description": "A",
+    "category": "transporte"
+  },
+  {
+    "name": "Holas",
+    "date": "2025-07-14",
+    "time": "10:10 AM - 10:11 AM",
+    "location": "XD",
+    "description": "holas",
+    "category": "energia"
+  },
+  {
+    "name": "SUS",
+    "date": "2025-07-14",
+    "time": "Todo el día",
+    "location": "SUS",
+    "description": "SUS",
+    "category": "reciclaje"
   }
 ]
