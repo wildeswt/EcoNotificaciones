@@ -1,4 +1,3 @@
-// Componente para mostrar una imagen de fondo de pantalla usando la ruta pública
 export default function BackGround() {
   return (
     <div
@@ -9,7 +8,7 @@ export default function BackGround() {
         width: "100vw",
         height: "100vh",
         zIndex: 0,
-        backgroundImage: "url(/Assets/background-gradient.png)", // Cambia el nombre si tu imagen es diferente
+        backgroundImage: "url(/Assets/background-gradient.png)",
         backgroundRepeat: "no-repeat",
         backgroundSize: "cover",
         backgroundPosition: "center",

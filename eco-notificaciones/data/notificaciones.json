@@ -56,10 +56,37 @@
   {
     "id": "e008",
     "name": "Campaña de Reducción de Plásticos",
-    "date": "2025-07-25",
-    "time": "09:00 AM - 01:00 PM",
+    "date": "2025-07-15",
+    "time": "09:00 AM - 09:20 PM",
     "location": "Cafetería Universitaria",
     "description": "Intercambia botellas plásticas por premios y aprende sobre alternativas sostenibles.",
     "category": "reciclaje"
+  },
+  {
+    "id": "e009",
+    "name": "Charla: Gestión Sostenible del Agua",
+    "date": "2025-07-15",
+    "time": "09:25 AM - 09:30 AM",
+    "location": "Sala de Conferencias, Edificio de Ingeniería Ambiental",
+    "description": "Un espacio para discutir prácticas de uso responsable y conservación del agua en la región.",
+    "category": "educacion"
+  },
+  {
+    "id": "e010",
+    "name": "Taller Práctico: Compostaje Casero",
+    "date": "2025-07-15",
+    "time": "09:25 AM - 10:50 AM",
+    "location": "Área Verde junto al Jardín Botánico",
+    "description": "Aprende técnicas sencillas para transformar tus residuos orgánicos en abono natural.",
+    "category": "reciclaje"
+  },
+  {
+    "id": "e011",
+    "name": "Foro Abierto: Juventud y Acción Climática",
+    "date": "2025-07-15",
+    "time": "09:25 AM - 10:50 AM",
+    "location": "Auditorio Menor, Facultad de Ciencias Sociales",
+    "description": "Conversatorio con líderes estudiantiles sobre el rol de la juventud en la lucha contra el cambio climático.",
+    "category": "energia"
   }
 ]
