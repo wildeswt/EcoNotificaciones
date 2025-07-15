@@ -35,11 +35,11 @@ function getSystemTips(): any[] {
       opacidad: "",
     });
   }
-  if (diaSemana === 7 && minutosAhora >= 7 * 60 + 30 && minutosAhora < 7 * 60 + 40) {
+  if (diaSemana === 2 && minutosAhora >= 7 * 60 + 30 && minutosAhora < 7 * 60 + 40) {
     tips.push({
       titulo: "Hoy es un buen día para usar bicicleta",
       descripcion: "Reduce tu huella de carbono y haz ejercicio.",
-      hora: "07:30 AM",
+      hora: "10:00 AM",
       tiempo: "Hoy",
       colorEstado: "bg-green-500",
       opacidad: "",
@@ -145,6 +145,13 @@ export default function Home() {
           };
         });
         const tips = getSystemTips();
+        tips.forEach(tip => {
+          logAction('Tip automático mostrado', {
+            titulo: tip.titulo,
+            descripcion: tip.descripcion,
+            hora: tip.hora
+          }, true);
+        });
         setRecientes([...tips, ...recientesEventos]);
         const pasadasEventos = eventos.filter(e => esEventoPasado(e, hoy, minutosAhora)).map(e => {
           const mostrarFecha = e.date < hoy;
