@@ -25,7 +25,6 @@ export default function ModalSobreNosotros({ isOpen, onClose }: ModalSobreNosotr
             className="bg-white rounded-2xl w-full max-w-2xl shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Header del Modal */}
             <div className="flex items-center justify-between p-6 border-b border-gray-200">
               <div>
                 <h2 className="text-2xl font-bold text-primary">Sobre Nosotros</h2>
@@ -43,10 +42,8 @@ export default function ModalSobreNosotros({ isOpen, onClose }: ModalSobreNosotr
               </motion.button>
             </div>
 
-            {/* Contenido del Modal */}
             <div className="p-6">
               <div className="space-y-6">
-                {/* Proyecto */}
                 <div>
                   <h3 className="text-lg font-bold text-primary mb-3">Eco-Notificaciones</h3>
                   <p className="text-sm text-gray-700 leading-relaxed mb-3">
@@ -59,7 +56,6 @@ export default function ModalSobreNosotros({ isOpen, onClose }: ModalSobreNosotr
                   </div>
                 </div>
 
-                {/* Integrantes */}
                 <div>
                   <h3 className="text-lg font-bold text-green-800 mb-4">Integrantes del Equipo</h3>
                   <div className="space-y-3">

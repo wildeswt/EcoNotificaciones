@@ -1,6 +1,3 @@
-// Sistema de Logging Orientado a Aspectos (POA)
-// Logger para registrar automáticamente las acciones de notificaciones
-
 export interface LogEntry {
   timestamp: string;
   action: string;
@@ -34,7 +31,6 @@ class Logger {
 
     this.logs.push(logEntry);
     
-    // Mostrar en consola con formato colorido
     this.printToConsole(logEntry);
   }
 
@@ -45,12 +41,32 @@ class Logger {
     const resetColor = '\x1b[0m';
 
     console.log(`${actionColor}${status} [${timestamp}] ${logEntry.action}${resetColor}`);
-    console.log(`   📋 Detalles:`, logEntry.details);
-    
-    if (logEntry.error) {
-      console.log(`   ⚠️  Error: ${logEntry.error}`);
+    // Mostrar detalles resumidos si es un array grande o un objeto con muchas claves
+    if (Array.isArray(logEntry.details?.notificaciones)) {
+      // Si es un array de notificaciones, mostrar solo cantidad y los títulos
+      const resumen = logEntry.details.notificaciones.map((n: any) => n.name || n.titulo || n.id);
+      console.log(`    Detalles: { notificaciones: [${resumen.length} elementos: ${resumen.slice(0,5).join(', ')}${resumen.length > 5 ? ', ...' : ''}] }`);
+      // Mostrar otros detalles si existen
+      const { notificaciones, ...otros } = logEntry.details;
+      if (Object.keys(otros).length > 0) {
+        console.log('    Otros detalles:', otros);
+      }
+    } else if (typeof logEntry.details === 'object' && logEntry.details !== null) {
+      // Si es un objeto muy grande, mostrar solo las claves principales
+      const claves = Object.keys(logEntry.details);
+      if (claves.length > 6) {
+        const resumen = claves.slice(0, 6).join(', ');
+        console.log(`    Detalles: { claves: [${resumen}${claves.length > 6 ? ', ...' : ''}] }`);
+      } else {
+        console.log('    Detalles:', logEntry.details);
+      }
+    } else {
+      console.log('    Detalles:', logEntry.details);
     }
-    console.log(''); // Línea en blanco para separar logs
+    if (logEntry.error) {
+      console.log(`     Error: ${logEntry.error}`);
+    }
+    console.log('');
   }
 
   // Obtener todos los logs

@@ -1,4 +1,3 @@
-// Servicio de Notificaciones con Logging Orientado a Aspectos
 import { logAction, withLogging } from '../utils/logger';
 
 export interface Notification {

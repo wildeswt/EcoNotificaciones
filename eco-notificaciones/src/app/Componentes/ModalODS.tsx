@@ -41,8 +41,6 @@ export default function ModalODS({ isOpen, onClose }: ModalODSProps) {
                 </svg>
               </motion.button>
             </div>
-
-            {/* Contenido del Modal */}
             <div className="p-6">
               <div className="grid md:grid-cols-2 gap-6">
                 {/* ODS 11 */}

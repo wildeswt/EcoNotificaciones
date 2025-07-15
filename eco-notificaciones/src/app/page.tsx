@@ -1,7 +1,7 @@
 "use client";
 import Notificacion from "./Componentes/Notificacion";
 import { useState, useEffect } from "react";
-import { fetchEvents} from "./apiEvents";
+import { fetchEvents } from "./apiEvents";
 import { motion, AnimatePresence } from "framer-motion";
 import BotonODS from "./Componentes/BotonODS";
 import BotonSobreNosotros from "./Componentes/BotonSobreNosotros";
@@ -9,6 +9,7 @@ import BotonAgregarEvento from "./Componentes/BotonAgregarEvento";
 import ModalODS from "./Componentes/ModalODS";
 import ModalSobreNosotros from "./Componentes/ModalSobreNosotros";
 import ModalAgregarEvento from "./Componentes/ModalAgregarEvento";
+import { logAction } from "./utils/logger";
 
 // Utilidad para formatear la fecha de hoy en formato 'YYYY-MM-DD'
 function getTodayString() {
@@ -19,16 +20,11 @@ function getTodayString() {
   return `${year}-${month}-${day}`;
 }
 
-// --- TIPS AUTOMÁTICOS SISTÉMICOS ---
-
-// Devuelve una lista de tips activos según el día y la hora actual
 function getSystemTips(): any[] {
   const ahora = new Date();
-  const diaSemana = ahora.getDay(); // 0: domingo, 1: lunes, ...
+  const diaSemana = ahora.getDay();
   const minutosAhora = ahora.getHours() * 60 + ahora.getMinutes();
   const tips: any[] = [];
-
-  // Lunes a las 8:00 AM
   if (diaSemana === 1 && minutosAhora >= 8 * 60 && minutosAhora < 8 * 60 + 10) {
     tips.push({
       titulo: "Recuerda usar bolsas reutilizables",
@@ -39,7 +35,6 @@ function getSystemTips(): any[] {
       opacidad: "",
     });
   }
-  // Viernes a las 7:30 AM
   if (diaSemana === 7 && minutosAhora >= 7 * 60 + 30 && minutosAhora < 7 * 60 + 40) {
     tips.push({
       titulo: "Hoy es un buen día para usar bicicleta",
@@ -50,7 +45,6 @@ function getSystemTips(): any[] {
       opacidad: "",
     });
   }
-  // Domingo a las 5:37 PM
   if (diaSemana === 0 && minutosAhora >= 17 * 60 + 37 && minutosAhora < 17 * 60 + 40) {
     tips.push({
       titulo: "Domingo ecológico: ¡Desconecta aparatos que no uses!",
@@ -61,19 +55,8 @@ function getSystemTips(): any[] {
       opacidad: "",
     });
   }
-  // Puedes agregar más tips aquí...
-
   return tips;
 }
-
-export default function Home() {
-  const [expandidoRecientes, setExpandidoRecientes] = useState(false);
-  const [expandidoPasadas, setExpandidoPasadas] = useState(false);
-  const [mostrarODS, setMostrarODS] = useState(false);
-  const [mostrarSobreNosotros, setMostrarSobreNosotros] = useState(false);
-  const [mostrarAgregarEvento, setMostrarAgregarEvento] = useState(false);
-  const [recientes, setRecientes] = useState<any[]>([]);
-  const [pasadas, setPasadas] = useState<any[]>([]);
 
 type Evento = {
   id: string;
@@ -85,9 +68,14 @@ type Evento = {
   category: string;
 };
 
-
-
-  // --- UTILIDADES Y LISTENERS DE EVENTOS TEMPORALES (POE) ---
+export default function Home() {
+  const [expandidoRecientes, setExpandidoRecientes] = useState(false);
+  const [expandidoPasadas, setExpandidoPasadas] = useState(false);
+  const [mostrarODS, setMostrarODS] = useState(false);
+  const [mostrarSobreNosotros, setMostrarSobreNosotros] = useState(false);
+  const [mostrarAgregarEvento, setMostrarAgregarEvento] = useState(false);
+  const [recientes, setRecientes] = useState<any[]>([]);
+  const [pasadas, setPasadas] = useState<any[]>([]);
 
   // Convierte una hora string a minutos desde medianoche (soporta 24h y 12h AM/PM)
   function horaStringAMinutos(horaStr: string): number {
@@ -106,13 +94,11 @@ type Evento = {
     return hora * 60 + minutos;
   }
 
-  // Listener: ¿Es evento de todo el día?
   function esTodoElDia(e: Evento): boolean {
     const t = e.time.trim().toLowerCase();
     return t === 'todo el día' || t === 'todo el dia';
   }
 
-  // Listener: ¿El evento está en curso (reciente)?
   function esEventoReciente(e: Evento, hoy: string, minutosAhora: number): boolean {
     if (e.date !== hoy) return false;
     if (esTodoElDia(e)) return true;
@@ -123,7 +109,6 @@ type Evento = {
     return minutosAhora >= minInicio && minutosAhora <= minFin;
   }
 
-  // Listener: ¿El evento ya terminó (pasado)?
   function esEventoPasado(e: Evento, hoy: string, minutosAhora: number): boolean {
     if (e.date < hoy) return true;
     if (e.date !== hoy) return false;
@@ -134,33 +119,33 @@ type Evento = {
     return minutosAhora > minFin;
   }
 
-  // --- SCHEDULER: EMISOR DE EVENTOS TEMPORALES (POE) ---
   useEffect(() => {
     let intervalId: NodeJS.Timeout;
-
-    // Scheduler: revisa el estado de los eventos cada minuto
     async function scheduler() {
       try {
         const eventos: Evento[] = await fetchEvents();
         const hoy = getTodayString();
         const ahora = new Date();
         const minutosAhora = ahora.getHours() * 60 + ahora.getMinutes();
-
-        // Listeners: clasifican los eventos según la hora
-        const recientesEventos = eventos.filter(e => esEventoReciente(e, hoy, minutosAhora)).map(e => ({
-          titulo: e.name,
-          descripcion: `${e.description}\nLugar: ${e.location}`,
-          hora: e.time,
-          tiempo: 'Hoy',
-          colorEstado: e.category === 'reciclaje' ? 'bg-green-500' : 'bg-yellow-500',
-          opacidad: '',
-        }));
-
-        // --- TIPS AUTOMÁTICOS SISTÉMICOS ---
+        const recientesEventos = eventos.filter(e => esEventoReciente(e, hoy, minutosAhora)).map(e => {
+          logAction('Notificación disparada', {
+            id: e.id,
+            name: e.name,
+            date: e.date,
+            time: e.time,
+            category: e.category
+          }, true);
+          return {
+            titulo: e.name,
+            descripcion: `${e.description}\nLugar: ${e.location}`,
+            hora: e.time,
+            tiempo: 'Hoy',
+            colorEstado: e.category === 'reciclaje' ? 'bg-green-500' : 'bg-yellow-500',
+            opacidad: '',
+          };
+        });
         const tips = getSystemTips();
-        // Combina tips automáticos con notificaciones recientes del usuario
         setRecientes([...tips, ...recientesEventos]);
-
         const pasadasEventos = eventos.filter(e => esEventoPasado(e, hoy, minutosAhora)).map(e => {
           const mostrarFecha = e.date < hoy;
           return {
@@ -172,30 +157,25 @@ type Evento = {
             opacidad: 'opacity-75',
           };
         });
-
         setPasadas(pasadasEventos);
       } catch (error) {
         console.error('Error al cargar eventos:', error);
       }
     }
-
     scheduler();
-    intervalId = setInterval(scheduler, 1000); // Scheduler: cada minuto
+    intervalId = setInterval(scheduler, 5000);
     return () => clearInterval(intervalId);
   }, [mostrarAgregarEvento]);
 
-  // Función para eliminar notificación reciente
   function eliminarNotificacionReciente(idx: number) {
     setRecientes(prev => prev.filter((_, i) => i !== idx));
   }
-  // Función para eliminar notificación pasada
   function eliminarNotificacionPasada(idx: number) {
     setPasadas(prev => prev.filter((_, i) => i !== idx));
   }
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4 relative overflow-hidden">
-      {/* Fondo de imagen */}
       <div
         style={{
           position: "fixed",
@@ -208,28 +188,20 @@ type Evento = {
           backgroundRepeat: "no-repeat",
           backgroundSize: "cover",
           backgroundPosition: "center",
-          opacity: 0.7, // un poco más visible para el filtro
+          opacity: 0.7,
           pointerEvents: "none",
-          filter: "brightness(0.7) blur(2px)", // oscurece y desenfoca
+          filter: "brightness(0.7) blur(2px)",
         }}
       />
-      {/* Botones laterales - Posicionados a la izquierda */}
       <div className="fixed top-[10%] left-[5%] flex flex-col space-y-3 z-30">
         <BotonODS onClick={() => setMostrarODS(true)} />
         <BotonSobreNosotros onClick={() => setMostrarSobreNosotros(true)} />
       </div>
-
       <div className="w-[50vw] h-[90vh] bg-white/90 backdrop-blur-xl z-20 rounded-3xl shadow-2xl border border-primary/20 p-8 relative overflow-hidden card-glow transition-all duration-300 flex flex-col justify-center  items-center">
-        {/* Efecto de gradiente interno */}
         <div className="absolute inset-0 bg-gradient-to-br from-white/80 via-white/60 to-green-50/30 rounded-3xl"></div>
-        {/* Efecto de borde brillante */}
         <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-green-400/20 via-transparent to-green-400/20 opacity-50"></div>
-        {/* Contenido principal */}
         <div className="relative z-10 flex flex-col items-center justify-center w-full h-full">
-
-        <div
-          className="text-center mb-8 sticky top-0 z-20 pt-2 pb-4 w-full"
-        >
+        <div className="text-center mb-8 sticky top-0 z-20 pt-2 pb-4 w-full">
           <h1 className="text-4xl md:text-5xl font-bold mb-3 text-primary bg-gradient-to-r from-green-600 to-green-800 bg-clip-text text-transparent">
             Eco-Notificaciones
           </h1>
@@ -237,7 +209,6 @@ type Evento = {
             Tu asistente de notificaciones ecológicas
           </p>
         </div>
-
         <div className="w-full max-w-md mt-6">
           <h2 className="text-xl font-semibold mb-4 text-primary px-2 flex items-center gap-2">
             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
@@ -258,7 +229,6 @@ type Evento = {
                     setExpandidoPasadas(false);
                   }}
                 >
-                {/* Stack visual */}
                   <motion.div
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 0.7, y: 0 }}
@@ -334,7 +304,6 @@ type Evento = {
             </AnimatePresence>
           </div>
         </div>
-
         <div className="w-full max-w-md mt-6">
           <h2 className="text-xl font-semibold mb-4 text-primary px-2 flex items-center gap-2">
             <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
@@ -355,7 +324,6 @@ type Evento = {
                     setExpandidoRecientes(false);
                   }}
                 >
-                {/* Stack visual */}
                   <motion.div
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 0.7, y: 0 }}
@@ -433,13 +401,9 @@ type Evento = {
         </div>
         </div>
       </div>
-
-      {/* Botón de agregar evento - Posicionado a la derecha */}
       <div className="fixed top-[10%] right-[5%] z-30">
         <BotonAgregarEvento onClick={() => setMostrarAgregarEvento(true)} />
       </div>
-
-      {/* Modales */}
       <ModalODS isOpen={mostrarODS} onClose={() => setMostrarODS(false)} />
       <ModalSobreNosotros isOpen={mostrarSobreNosotros} onClose={() => setMostrarSobreNosotros(false)} />
       <ModalAgregarEvento isOpen={mostrarAgregarEvento} onClose={() => {setMostrarAgregarEvento(false) }} />

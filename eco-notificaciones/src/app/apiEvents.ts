@@ -1,4 +1,3 @@
-// apiEvents.ts - Actualizado con logging orientado a aspectos
 import { logAction } from './utils/logger';
 import { notificationService } from './services/NotificationService';
 

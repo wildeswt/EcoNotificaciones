@@ -5,8 +5,8 @@ interface NotificacionProps {
   descripcion: string;
   hora: string;
   tiempo: string;
-  colorEstado: string; // Ejemplo: 'bg-green-500', 'bg-yellow-500', 'bg-gray-400'
-  opacidad?: string; // Ejemplo: 'opacity-75'
+  colorEstado: string; 
+  opacidad?: string;
   onRemove?: () => void;
   expandida?: boolean;
 }
