@@ -4,8 +4,8 @@ import { Work_Sans } from 'next/font/google';
 
 const work_Sans = Work_Sans({
   subsets: ['latin'],
-  weight: ['400', '700'], // personaliza pesos
-  variable: '--font-work-sans', // opcional para usar en Tailwind o CSS
+  weight: ['400', '700'],
+  variable: '--font-work-sans', 
 });
 
 export const metadata: Metadata = {

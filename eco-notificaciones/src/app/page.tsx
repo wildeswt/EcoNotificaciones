@@ -136,12 +136,12 @@ export default function Home() {
             category: e.category
           }, true);
           return {
-            titulo: e.name,
-            descripcion: `${e.description}\nLugar: ${e.location}`,
-            hora: e.time,
-            tiempo: 'Hoy',
-            colorEstado: e.category === 'reciclaje' ? 'bg-green-500' : 'bg-yellow-500',
-            opacidad: '',
+          titulo: e.name,
+          descripcion: `${e.description}\nLugar: ${e.location}`,
+          hora: e.time,
+          tiempo: 'Hoy',
+          colorEstado: e.category === 'reciclaje' ? 'bg-green-500' : 'bg-yellow-500',
+          opacidad: '',
           };
         });
         const tips = getSystemTips();
@@ -163,7 +163,7 @@ export default function Home() {
       }
     }
     scheduler();
-    intervalId = setInterval(scheduler, 5000);
+    intervalId = setInterval(scheduler, 5000); 
     return () => clearInterval(intervalId);
   }, [mostrarAgregarEvento]);
 

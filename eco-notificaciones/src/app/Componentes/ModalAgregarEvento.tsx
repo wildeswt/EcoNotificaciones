@@ -28,6 +28,24 @@ export default function ModalAgregarEvento({ isOpen, onClose }: ModalAgregarEven
   const [errorLocalizacion, setErrorLocalizacion] = useState("");
   const [errorTipo, setErrorTipo] = useState("");
 
+  // Agrego la función auxiliar para comparar horas
+  function validarHoraFin(horaInicio: string, ampmInicio: string, horaFin: string, ampmFin: string) {
+    if (!horaInicio || !horaFin) return false;
+    const [h1, m1] = horaInicio.split(":");
+    const [h2, m2] = horaFin.split(":");
+    let horaInicioNum = parseInt(h1);
+    let horaFinNum = parseInt(h2);
+    if (ampmInicio === "PM" && horaInicioNum !== 12) horaInicioNum += 12;
+    if (ampmInicio === "AM" && horaInicioNum === 12) horaInicioNum = 0;
+    if (ampmFin === "PM" && horaFinNum !== 12) horaFinNum += 12;
+    if (ampmFin === "AM" && horaFinNum === 12) horaFinNum = 0;
+    const minutosInicio = parseInt(m1);
+    const minutosFin = parseInt(m2);
+    const totalMinInicio = horaInicioNum * 60 + minutosInicio;
+    const totalMinFin = horaFinNum * 60 + minutosFin;
+    return totalMinFin <= totalMinInicio;
+  }
+
   return (
     <AnimatePresence >
       {isOpen && (
@@ -142,7 +160,14 @@ export default function ModalAgregarEvento({ isOpen, onClose }: ModalAgregarEven
                           value={hora_inicio_ev.length >= 2 ? hora_inicio_ev.slice(0,2) : ''}
                           onChange={e => {
                             const minutos = hora_inicio_ev.length === 5 ? hora_inicio_ev.slice(3,5) : '00';
-                            setHoraInicioEv(e.target.value + ':' + minutos);
+                            const nuevaHora = e.target.value + ':' + minutos;
+                            setHoraInicioEv(nuevaHora);
+                            // Validar hora fin
+                            if (hora_fin_ev && validarHoraFin(nuevaHora, hora_inicio_ampm, hora_fin_ev, hora_fin_ampm)) {
+                              setErrorHora('La hora de fin debe ser mayor que la de inicio.');
+                            } else {
+                              setErrorHora('');
+                            }
                           }}
                         >
                           <option value="">hh</option>
@@ -155,7 +180,14 @@ export default function ModalAgregarEvento({ isOpen, onClose }: ModalAgregarEven
                           value={hora_inicio_ev.length === 5 ? hora_inicio_ev.slice(3,5) : ''}
                           onChange={e => {
                             const horas = hora_inicio_ev.length >= 2 ? hora_inicio_ev.slice(0,2) : '01';
-                            setHoraInicioEv(horas + ':' + e.target.value);
+                            const nuevaHora = horas + ':' + e.target.value;
+                            setHoraInicioEv(nuevaHora);
+                            // Validar hora fin
+                            if (hora_fin_ev && validarHoraFin(nuevaHora, hora_inicio_ampm, hora_fin_ev, hora_fin_ampm)) {
+                              setErrorHora('La hora de fin debe ser mayor que la de inicio.');
+                            } else {
+                              setErrorHora('');
+                            }
                           }}
                         >
                           <option value="">mm</option>
@@ -166,7 +198,14 @@ export default function ModalAgregarEvento({ isOpen, onClose }: ModalAgregarEven
                         <select
                           className="px-2 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                           value={hora_inicio_ampm}
-                          onChange={e => setHoraInicioAMPM(e.target.value)}
+                          onChange={e => {
+                            setHoraInicioAMPM(e.target.value);
+                            if (hora_fin_ev && validarHoraFin(hora_inicio_ev, e.target.value, hora_fin_ev, hora_fin_ampm)) {
+                              setErrorHora('La hora de fin debe ser mayor que la de inicio.');
+                            } else {
+                              setErrorHora('');
+                            }
+                          }}
                         >
                           <option value="AM">AM</option>
                           <option value="PM">PM</option>
@@ -183,7 +222,13 @@ export default function ModalAgregarEvento({ isOpen, onClose }: ModalAgregarEven
                           value={hora_fin_ev.length >= 2 ? hora_fin_ev.slice(0,2) : ''}
                           onChange={e => {
                             const minutos = hora_fin_ev.length === 5 ? hora_fin_ev.slice(3,5) : '00';
-                            setHoraFinEv(e.target.value + ':' + minutos);
+                            const nuevaHora = e.target.value + ':' + minutos;
+                            setHoraFinEv(nuevaHora);
+                            if (hora_inicio_ev && validarHoraFin(hora_inicio_ev, hora_inicio_ampm, nuevaHora, hora_fin_ampm)) {
+                              setErrorHora('La hora de fin debe ser mayor que la de inicio.');
+                            } else {
+                              setErrorHora('');
+                            }
                           }}
                         >
                           <option value="">hh</option>
@@ -196,7 +241,13 @@ export default function ModalAgregarEvento({ isOpen, onClose }: ModalAgregarEven
                           value={hora_fin_ev.length === 5 ? hora_fin_ev.slice(3,5) : ''}
                           onChange={e => {
                             const horas = hora_fin_ev.length >= 2 ? hora_fin_ev.slice(0,2) : '01';
-                            setHoraFinEv(horas + ':' + e.target.value);
+                            const nuevaHora = horas + ':' + e.target.value;
+                            setHoraFinEv(nuevaHora);
+                            if (hora_inicio_ev && validarHoraFin(hora_inicio_ev, hora_inicio_ampm, nuevaHora, hora_fin_ampm)) {
+                              setErrorHora('La hora de fin debe ser mayor que la de inicio.');
+                            } else {
+                              setErrorHora('');
+                            }
                           }}
                         >
                           <option value="">mm</option>
@@ -207,7 +258,14 @@ export default function ModalAgregarEvento({ isOpen, onClose }: ModalAgregarEven
                         <select
                           className="px-2 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                           value={hora_fin_ampm}
-                          onChange={e => setHoraFinAMPM(e.target.value)}
+                          onChange={e => {
+                            setHoraFinAMPM(e.target.value);
+                            if (hora_inicio_ev && validarHoraFin(hora_inicio_ev, hora_inicio_ampm, hora_fin_ev, e.target.value)) {
+                              setErrorHora('La hora de fin debe ser mayor que la de inicio.');
+                            } else {
+                              setErrorHora('');
+                            }
+                          }}
                         >
                           <option value="AM">AM</option>
                           <option value="PM">PM</option>
@@ -257,23 +315,23 @@ export default function ModalAgregarEvento({ isOpen, onClose }: ModalAgregarEven
                     <div className="text-red-600 text-xs mt-1">{errorTipo}</div>
                   )}
                 </div>
-              </div>
+                </div>
 
-              {/* Botones */}
+                {/* Botones */}
               <div className="md:col-span-2 flex flex-col md:flex-row space-y-3 md:space-y-0 md:space-x-3 pt-4">
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={onClose}
-                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-200"
-                >
-                  Cancelar
-                </motion.button>
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200"
-                  onClick={async () => {
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={onClose}
+                    className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-200"
+                  >
+                    Cancelar
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200"
+                    onClick={async () => {
                     setErrorMsg("");
                     setErrorTitulo("");
                     setErrorDescripcion("");
@@ -354,39 +412,39 @@ export default function ModalAgregarEvento({ isOpen, onClose }: ModalAgregarEven
                       hayError = true;
                     }
                     if (hayError) return;
-                    try {
-                      // Formatear hora inicio y fin a 'hh:mm AM/PM'
-                      const horaInicioFormateada = hora_inicio_ev ? `${hora_inicio_ev}${hora_inicio_ampm ? ' ' + hora_inicio_ampm : ''}`.replace(/^([0-9]{2}):([0-9]{2})/, (m, h, min) => `${('0' + ((+h % 12) || 12)).slice(-2)}:${min}`) : '';
-                      const horaFinFormateada = hora_fin_ev ? `${hora_fin_ev}${hora_fin_ampm ? ' ' + hora_fin_ampm : ''}`.replace(/^([0-9]{2}):([0-9]{2})/, (m, h, min) => `${('0' + ((+h % 12) || 12)).slice(-2)}:${min}`) : '';
-                      const nuevaNotificacion = {
-                        name: nombre_ev,
-                        date: fecha_ev,
-                        time: todoElDia ? 'Todo el día' : `${horaInicioFormateada} - ${horaFinFormateada}`,
-                        location: localizacion_ev,
-                        description: descripcion_ev,
-                        category: tipo_ev,
-                      };
-                      setNombreEv("");
-                      setDescripcionEv("");
-                      setTipoEv("");
-                      setFechaEv("");
-                      setHoraInicioEv("");
-                      setTodoElDia(false);
-                      setHoraInicioAMPM("AM");
-                      setHoraFinEv("");
-                      setHoraFinAMPM("AM");
-                      setLocalizacionEv("");
-                      await createNotificationWithValidation(nuevaNotificacion);
-                      onClose();
-                    } catch (error) {
+                      try {
+                        // Formatear hora inicio y fin a 'hh:mm AM/PM'
+                        const horaInicioFormateada = hora_inicio_ev ? `${hora_inicio_ev}${hora_inicio_ampm ? ' ' + hora_inicio_ampm : ''}`.replace(/^([0-9]{2}):([0-9]{2})/, (m, h, min) => `${('0' + ((+h % 12) || 12)).slice(-2)}:${min}`) : '';
+                        const horaFinFormateada = hora_fin_ev ? `${hora_fin_ev}${hora_fin_ampm ? ' ' + hora_fin_ampm : ''}`.replace(/^([0-9]{2}):([0-9]{2})/, (m, h, min) => `${('0' + ((+h % 12) || 12)).slice(-2)}:${min}`) : '';
+                        const nuevaNotificacion = {
+                          name: nombre_ev,
+                          date: fecha_ev,
+                          time: todoElDia ? 'Todo el día' : `${horaInicioFormateada} - ${horaFinFormateada}`,
+                          location: localizacion_ev,
+                          description: descripcion_ev,
+                          category: tipo_ev,
+                        };
+                        setNombreEv("");
+                        setDescripcionEv("");
+                        setTipoEv("");
+                        setFechaEv("");
+                        setHoraInicioEv("");
+                        setTodoElDia(false);
+                        setHoraInicioAMPM("AM");
+                        setHoraFinEv("");
+                        setHoraFinAMPM("AM");
+                        setLocalizacionEv("");
+                        await createNotificationWithValidation(nuevaNotificacion);
+                        onClose();
+                      } catch (error) {
                       setErrorMsg("Error al crear el evento. Verifica los datos e inténtalo de nuevo.");
-                      console.error("Error al crear el evento:", error);
-                    }
-                  }}
-                >
-                  Crear Evento
-                </motion.button>
-              </div>
+                        console.error("Error al crear el evento:", error);
+                      }
+                    }}
+                  >
+                    Crear Evento
+                  </motion.button>
+                </div>
               {errorMsg && (
                 <div className="text-red-600 text-sm mt-2 text-center">{errorMsg}</div>
               )}
