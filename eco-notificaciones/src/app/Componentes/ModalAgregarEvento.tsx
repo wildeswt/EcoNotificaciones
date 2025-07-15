@@ -20,6 +20,13 @@ export default function ModalAgregarEvento({ isOpen, onClose }: ModalAgregarEven
   const [hora_fin_ampm, setHoraFinAMPM] = useState("AM");
   const [todoElDia, setTodoElDia] = useState(false);
   const [localizacion_ev, setLocalizacionEv] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
+  const [errorTitulo, setErrorTitulo] = useState("");
+  const [errorDescripcion, setErrorDescripcion] = useState("");
+  const [errorFecha, setErrorFecha] = useState("");
+  const [errorHora, setErrorHora] = useState("");
+  const [errorLocalizacion, setErrorLocalizacion] = useState("");
+  const [errorTipo, setErrorTipo] = useState("");
 
   return (
     <AnimatePresence >
@@ -36,7 +43,7 @@ export default function ModalAgregarEvento({ isOpen, onClose }: ModalAgregarEven
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
-            className="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-y-auto border-2 border-primary/20"
+            className="bg-white rounded-2xl w-full max-w-2xl shadow-2xl overflow-y-auto border-2 border-primary/20"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header del Modal */}
@@ -72,6 +79,9 @@ export default function ModalAgregarEvento({ isOpen, onClose }: ModalAgregarEven
                     value={nombre_ev}
                     onChange={(e) => setNombreEv(e.target.value)}
                   />
+                  {errorTitulo && (
+                    <div className="text-red-600 text-xs mt-1">{errorTitulo}</div>
+                  )}
                 </div>
 
 
@@ -87,6 +97,9 @@ export default function ModalAgregarEvento({ isOpen, onClose }: ModalAgregarEven
                     value={descripcion_ev}
                     onChange={(e) => setDescripcionEv(e.target.value)}
                   />
+                  {errorDescripcion && (
+                    <div className="text-red-600 text-xs mt-1">{errorDescripcion}</div>
+                  )}
                 </div>
 
                 {/* Fecha del evento */}
@@ -100,6 +113,9 @@ export default function ModalAgregarEvento({ isOpen, onClose }: ModalAgregarEven
                     value={fecha_ev}
                     onChange={e => setFechaEv(e.target.value)}
                   />
+                  {errorFecha && (
+                    <div className="text-red-600 text-xs mt-1">{errorFecha}</div>
+                  )}
                 </div>
 
                 {/* Todo el día */}
@@ -115,22 +131,38 @@ export default function ModalAgregarEvento({ isOpen, onClose }: ModalAgregarEven
 
                 {/* Hora de inicio y fin solo si no es todo el día */}
                 {!todoElDia && (
-                  <>
-                    {/* Hora de inicio */}
-                    <div>
+                  <div className="flex flex-col md:flex-row md:items-end gap-4">
+                    <div className="flex-1">
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         Hora de inicio
                       </label>
                       <div className="flex gap-2">
-                        <input
-                          type="text"
-                          pattern="^(0[1-9]|1[0-2]):[0-5][0-9]$"
-                          placeholder="hh:mm"
-                          maxLength={5}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                          value={hora_inicio_ev}
-                          onChange={e => setHoraInicioEv(e.target.value)}
-                        />
+                        <select
+                          className="px-2 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                          value={hora_inicio_ev.length >= 2 ? hora_inicio_ev.slice(0,2) : ''}
+                          onChange={e => {
+                            const minutos = hora_inicio_ev.length === 5 ? hora_inicio_ev.slice(3,5) : '00';
+                            setHoraInicioEv(e.target.value + ':' + minutos);
+                          }}
+                        >
+                          <option value="">hh</option>
+                          {[...Array(12)].map((_, i) => (
+                            <option key={i+1} value={String(i+1).padStart(2, '0')}>{String(i+1).padStart(2, '0')}</option>
+                          ))}
+                        </select>
+                        <select
+                          className="px-2 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                          value={hora_inicio_ev.length === 5 ? hora_inicio_ev.slice(3,5) : ''}
+                          onChange={e => {
+                            const horas = hora_inicio_ev.length >= 2 ? hora_inicio_ev.slice(0,2) : '01';
+                            setHoraInicioEv(horas + ':' + e.target.value);
+                          }}
+                        >
+                          <option value="">mm</option>
+                          {[...Array(60)].map((_, i) => (
+                            <option key={i} value={String(i).padStart(2, '0')}>{String(i).padStart(2, '0')}</option>
+                          ))}
+                        </select>
                         <select
                           className="px-2 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                           value={hora_inicio_ampm}
@@ -141,22 +173,37 @@ export default function ModalAgregarEvento({ isOpen, onClose }: ModalAgregarEven
                         </select>
                       </div>
                     </div>
-
-                    {/* Hora de fin */}
-                    <div>
+                    <div className="flex-1">
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         Hora de fin
                       </label>
                       <div className="flex gap-2">
-                        <input
-                          type="text"
-                          pattern="^(0[1-9]|1[0-2]):[0-5][0-9]$"
-                          placeholder="hh:mm"
-                          maxLength={5}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                          value={hora_fin_ev}
-                          onChange={e => setHoraFinEv(e.target.value)}
-                        />
+                        <select
+                          className="px-2 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                          value={hora_fin_ev.length >= 2 ? hora_fin_ev.slice(0,2) : ''}
+                          onChange={e => {
+                            const minutos = hora_fin_ev.length === 5 ? hora_fin_ev.slice(3,5) : '00';
+                            setHoraFinEv(e.target.value + ':' + minutos);
+                          }}
+                        >
+                          <option value="">hh</option>
+                          {[...Array(12)].map((_, i) => (
+                            <option key={i+1} value={String(i+1).padStart(2, '0')}>{String(i+1).padStart(2, '0')}</option>
+                          ))}
+                        </select>
+                        <select
+                          className="px-2 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                          value={hora_fin_ev.length === 5 ? hora_fin_ev.slice(3,5) : ''}
+                          onChange={e => {
+                            const horas = hora_fin_ev.length >= 2 ? hora_fin_ev.slice(0,2) : '01';
+                            setHoraFinEv(horas + ':' + e.target.value);
+                          }}
+                        >
+                          <option value="">mm</option>
+                          {[...Array(60)].map((_, i) => (
+                            <option key={i} value={String(i).padStart(2, '0')}>{String(i).padStart(2, '0')}</option>
+                          ))}
+                        </select>
                         <select
                           className="px-2 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                           value={hora_fin_ampm}
@@ -167,7 +214,10 @@ export default function ModalAgregarEvento({ isOpen, onClose }: ModalAgregarEven
                         </select>
                       </div>
                     </div>
-                  </>
+                  </div>
+                )}
+                {errorHora && (
+                  <div className="text-red-600 text-xs mt-1">{errorHora}</div>
                 )}
 
                 {/* Localización */}
@@ -182,6 +232,9 @@ export default function ModalAgregarEvento({ isOpen, onClose }: ModalAgregarEven
                     value={localizacion_ev}
                     onChange={e => setLocalizacionEv(e.target.value)}
                   />
+                  {errorLocalizacion && (
+                    <div className="text-red-600 text-xs mt-1">{errorLocalizacion}</div>
+                  )}
                 </div>
 
                 {/* Tipo de evento */}
@@ -200,56 +253,143 @@ export default function ModalAgregarEvento({ isOpen, onClose }: ModalAgregarEven
                     <option value="transporte">Transporte sostenible</option>
                     <option value="otros">Otros</option>
                   </select>
-                </div>
-
-                {/* Botones */}
-                <div className="flex space-x-3 pt-4">
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={onClose}
-                    className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-200"
-                  >
-                    Cancelar
-                  </motion.button>
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200"
-                    onClick={async () => {
-                      try {
-                        // Formatear hora inicio y fin a 'hh:mm AM/PM'
-                        const horaInicioFormateada = hora_inicio_ev ? `${hora_inicio_ev}${hora_inicio_ampm ? ' ' + hora_inicio_ampm : ''}`.replace(/^([0-9]{2}):([0-9]{2})/, (m, h, min) => `${('0' + ((+h % 12) || 12)).slice(-2)}:${min}`) : '';
-                        const horaFinFormateada = hora_fin_ev ? `${hora_fin_ev}${hora_fin_ampm ? ' ' + hora_fin_ampm : ''}`.replace(/^([0-9]{2}):([0-9]{2})/, (m, h, min) => `${('0' + ((+h % 12) || 12)).slice(-2)}:${min}`) : '';
-                        const nuevaNotificacion = {
-                          name: nombre_ev,
-                          date: fecha_ev,
-                          time: todoElDia ? 'Todo el día' : `${horaInicioFormateada} - ${horaFinFormateada}`,
-                          location: localizacion_ev,
-                          description: descripcion_ev,
-                          category: tipo_ev,
-                        };
-                        setNombreEv("");
-                        setDescripcionEv("");
-                        setTipoEv("");
-                        setFechaEv("");
-                        setHoraInicioEv("");
-                        setTodoElDia(false);
-                        setHoraInicioAMPM("AM");
-                        setHoraFinEv("");
-                        setHoraFinAMPM("AM");
-                        setLocalizacionEv("");
-                        await createNotificationWithValidation(nuevaNotificacion);
-                        onClose();
-                      } catch (error) {
-                        console.error("Error al crear el evento:", error);
-                      }
-                    }}
-                  >
-                    Crear Evento
-                  </motion.button>
+                  {errorTipo && (
+                    <div className="text-red-600 text-xs mt-1">{errorTipo}</div>
+                  )}
                 </div>
               </div>
+
+              {/* Botones */}
+              <div className="md:col-span-2 flex flex-col md:flex-row space-y-3 md:space-y-0 md:space-x-3 pt-4">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={onClose}
+                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-200"
+                >
+                  Cancelar
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200"
+                  onClick={async () => {
+                    setErrorMsg("");
+                    setErrorTitulo("");
+                    setErrorDescripcion("");
+                    setErrorFecha("");
+                    setErrorHora("");
+                    setErrorLocalizacion("");
+                    setErrorTipo("");
+                    let hayError = false;
+                    if (nombre_ev.trim().length < 3) {
+                      setErrorTitulo("El título debe tener al menos 3 caracteres.");
+                      hayError = true;
+                    }
+                    if (descripcion_ev.trim().length < 10) {
+                      setErrorDescripcion("La descripción debe tener al menos 10 caracteres.");
+                      hayError = true;
+                    }
+                    // Validación de fecha
+                    const hoy = new Date();
+                    hoy.setHours(0,0,0,0);
+                    if (!fecha_ev) {
+                      setErrorFecha("La fecha es obligatoria.");
+                      hayError = true;
+                    } else {
+                      const fechaSeleccionada = new Date(fecha_ev);
+                      if (fechaSeleccionada >= hoy) {
+                        setErrorFecha("Solo se permiten fechas anteriores a hoy.");
+                        hayError = true;
+                      }
+                    }
+                    // Validación de horas
+                    if (!todoElDia) {
+                      if (!hora_inicio_ev || !hora_fin_ev) {
+                        setErrorHora("Debes seleccionar la hora de inicio y fin.");
+                        hayError = true;
+                      } else {
+                        // Validar que la hora de inicio no sea pasada si es hoy
+                        if (fecha_ev === hoy.toISOString().slice(0,10)) {
+                          const ahora = new Date();
+                          const [h, m] = hora_inicio_ev.split(":");
+                          let horaNum = parseInt(h);
+                          if (hora_inicio_ampm === "PM" && horaNum !== 12) horaNum += 12;
+                          if (hora_inicio_ampm === "AM" && horaNum === 12) horaNum = 0;
+                          const minutosNum = parseInt(m);
+                          const horaEvento = new Date();
+                          horaEvento.setHours(horaNum, minutosNum, 0, 0);
+                          if (horaEvento < ahora) {
+                            setErrorHora("La hora de inicio no puede ser pasada.");
+                            hayError = true;
+                          }
+                        }
+                        // Validar que la hora de fin sea mayor que la de inicio
+                        const [h1, m1] = hora_inicio_ev.split(":");
+                        const [h2, m2] = hora_fin_ev.split(":");
+                        let horaInicioNum = parseInt(h1);
+                        let horaFinNum = parseInt(h2);
+                        if (hora_inicio_ampm === "PM" && horaInicioNum !== 12) horaInicioNum += 12;
+                        if (hora_inicio_ampm === "AM" && horaInicioNum === 12) horaInicioNum = 0;
+                        if (hora_fin_ampm === "PM" && horaFinNum !== 12) horaFinNum += 12;
+                        if (hora_fin_ampm === "AM" && horaFinNum === 12) horaFinNum = 0;
+                        const minutosInicio = parseInt(m1);
+                        const minutosFin = parseInt(m2);
+                        const totalMinInicio = horaInicioNum * 60 + minutosInicio;
+                        const totalMinFin = horaFinNum * 60 + minutosFin;
+                        if (totalMinFin <= totalMinInicio) {
+                          setErrorHora("La hora de fin debe ser mayor que la de inicio.");
+                          hayError = true;
+                        }
+                      }
+                    }
+                    // Validación localización
+                    if (!localizacion_ev.trim()) {
+                      setErrorLocalizacion("La localización es obligatoria.");
+                      hayError = true;
+                    }
+                    // Validación tipo
+                    if (!tipo_ev) {
+                      setErrorTipo("Debes seleccionar un tipo de evento.");
+                      hayError = true;
+                    }
+                    if (hayError) return;
+                    try {
+                      // Formatear hora inicio y fin a 'hh:mm AM/PM'
+                      const horaInicioFormateada = hora_inicio_ev ? `${hora_inicio_ev}${hora_inicio_ampm ? ' ' + hora_inicio_ampm : ''}`.replace(/^([0-9]{2}):([0-9]{2})/, (m, h, min) => `${('0' + ((+h % 12) || 12)).slice(-2)}:${min}`) : '';
+                      const horaFinFormateada = hora_fin_ev ? `${hora_fin_ev}${hora_fin_ampm ? ' ' + hora_fin_ampm : ''}`.replace(/^([0-9]{2}):([0-9]{2})/, (m, h, min) => `${('0' + ((+h % 12) || 12)).slice(-2)}:${min}`) : '';
+                      const nuevaNotificacion = {
+                        name: nombre_ev,
+                        date: fecha_ev,
+                        time: todoElDia ? 'Todo el día' : `${horaInicioFormateada} - ${horaFinFormateada}`,
+                        location: localizacion_ev,
+                        description: descripcion_ev,
+                        category: tipo_ev,
+                      };
+                      setNombreEv("");
+                      setDescripcionEv("");
+                      setTipoEv("");
+                      setFechaEv("");
+                      setHoraInicioEv("");
+                      setTodoElDia(false);
+                      setHoraInicioAMPM("AM");
+                      setHoraFinEv("");
+                      setHoraFinAMPM("AM");
+                      setLocalizacionEv("");
+                      await createNotificationWithValidation(nuevaNotificacion);
+                      onClose();
+                    } catch (error) {
+                      setErrorMsg("Error al crear el evento. Verifica los datos e inténtalo de nuevo.");
+                      console.error("Error al crear el evento:", error);
+                    }
+                  }}
+                >
+                  Crear Evento
+                </motion.button>
+              </div>
+              {errorMsg && (
+                <div className="text-red-600 text-sm mt-2 text-center">{errorMsg}</div>
+              )}
             </div>
           </motion.div>
         </motion.div>
